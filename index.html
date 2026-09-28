@@ -130,6 +130,27 @@
   }
   .chevron{ flex:none; color:var(--text-lo); }
 
+  .geo-bar{
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  .geo-btn{
+    flex:none; font-family:'Space Grotesk', sans-serif; font-size:14px; font-weight:500;
+    color:var(--text-hi); background:var(--bg-card); border:1px solid var(--hairline);
+    border-radius:10px; padding:9px 14px; cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .geo-btn:active{ transform:scale(.97); border-color:var(--live); }
+  .geo-btn:disabled{ opacity:.6; cursor:wait; }
+  .geo-status{
+    flex:1; min-width:0; font-family:'IBM Plex Mono', monospace; font-size:12px;
+    color:var(--text-lo); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .geo-status.ok{ color:var(--live); }
+  .geo-clear{
+    flex:none; background:none; border:none; color:var(--text-lo);
+    font-size:16px; cursor:pointer; padding:4px 6px; display:none;
+  }
+
   footer{
     margin-top:30px; font-family:'IBM Plex Mono', monospace; font-size:11px;
     color:var(--text-lo); text-align:center; line-height:1.7;
@@ -150,6 +171,12 @@
       <button class="lang-btn" data-lang="en">EN</button>
     </div>
   </header>
+
+  <div class="geo-bar">
+    <button class="geo-btn" id="geo-btn" type="button">📍 Ma position</button>
+    <span class="geo-status" id="geo-status"></span>
+    <button class="geo-clear" id="geo-clear" type="button" aria-label="Effacer la position">✕</button>
+  </div>
 
   <main>
     <a class="card" style="--accent: var(--amber)" href="https://fef73.github.io/meteo-famille/" target="_blank" rel="noopener">
@@ -234,6 +261,14 @@ const TRANSLATIONS = {
     card4Title: "Historique Météo neige",
     card4Desc: "conditions neige / montagne",
     footer: "Appuie sur une carte pour ouvrir la prévision",
+    geoBtn: "📍 Ma position",
+    geoBusy: "Localisation…",
+    geoDenied: "Autorisation refusée",
+    geoUnavailable: "Position indisponible",
+    geoTimeout: "Délai dépassé, réessaie",
+    geoUnsupported: "Non pris en charge",
+    geoHttps: "Nécessite HTTPS",
+    geoClear: "Effacer la position",
   },
   en: {
     eyebrow: "No-code sites / 100% AI Claude.ai by fef73",
@@ -247,10 +282,18 @@ const TRANSLATIONS = {
     card4Title: "Snow weather history",
     card4Desc: "snow / mountain conditions",
     footer: "Tap a card to open the forecast",
+    geoBtn: "📍 My location",
+    geoBusy: "Locating…",
+    geoDenied: "Permission denied",
+    geoUnavailable: "Location unavailable",
+    geoTimeout: "Timed out, try again",
+    geoUnsupported: "Not supported",
+    geoHttps: "Requires HTTPS",
+    geoClear: "Clear location",
   },
 };
 
-let lang = localStorage.getItem("lanceur-meteo-lang") || (navigator.language && navigator.language.startsWith("en") ? "en" : "fr");
+let lang = (function(){ try { return localStorage.getItem("lanceur-meteo-lang"); } catch(e){ return null; } })() || (navigator.language && navigator.language.startsWith("en") ? "en" : "fr");
 
 function t(key){
   const dict = TRANSLATIONS[lang] || TRANSLATIONS.fr;
@@ -271,12 +314,14 @@ function applyTranslations(){
   document.getElementById("card4-title").textContent = t("card4Title");
   document.getElementById("card4-desc").textContent = t("card4Desc");
   document.getElementById("footer-text").textContent = t("footer");
+  document.getElementById("geo-btn").textContent = t("geoBtn");
+  document.getElementById("geo-clear").setAttribute("aria-label", t("geoClear"));
 }
 
 function setLang(newLang){
   if(newLang !== "fr" && newLang !== "en") return;
   lang = newLang;
-  localStorage.setItem("lanceur-meteo-lang", lang);
+  try { localStorage.setItem("lanceur-meteo-lang", lang); } catch(e){}
   applyTranslations();
 }
 
@@ -285,6 +330,80 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
 });
 
 applyTranslations();
+
+/* ---------- Géolocalisation ---------- */
+const GEO_KEY = "lanceur-meteo-geo";
+const geoBtn = document.getElementById("geo-btn");
+const geoStatus = document.getElementById("geo-status");
+const geoClear = document.getElementById("geo-clear");
+const cardBaseHrefs = [...document.querySelectorAll("a.card")].map(a => a.href);
+
+function setStatus(text, ok){
+  geoStatus.textContent = text || "";
+  geoStatus.classList.toggle("ok", !!ok);
+}
+
+function applyGeoToLinks(geo){
+  document.querySelectorAll("a.card").forEach((a, i) => {
+    const url = new URL(cardBaseHrefs[i]);
+    if (geo) {
+      url.searchParams.set("lat", geo.lat.toFixed(4));
+      url.searchParams.set("lon", geo.lon.toFixed(4));
+      if (geo.name) url.searchParams.set("name", geo.name);
+    }
+    a.href = url.toString();
+  });
+}
+
+function showGeo(geo){
+  applyGeoToLinks(geo);
+  const coords = geo.lat.toFixed(3) + ", " + geo.lon.toFixed(3);
+  setStatus(geo.name ? geo.name + " · " + coords : coords, true);
+  geoClear.style.display = "inline-block";
+}
+
+async function reverseGeocode(lat, lon){
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=${lat}&lon=${lon}&accept-language=${lang}`);
+    if (!r.ok) return "";
+    const d = await r.json();
+    const a = d.address || {};
+    return a.city || a.town || a.village || a.municipality || a.county || "";
+  } catch(e){ return ""; }
+}
+
+function locate(){
+  if (!("geolocation" in navigator)) { setStatus(t("geoUnsupported")); return; }
+  if (!window.isSecureContext) { setStatus(t("geoHttps")); return; }
+  geoBtn.disabled = true;
+  setStatus(t("geoBusy"));
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const geo = { lat: pos.coords.latitude, lon: pos.coords.longitude, name: "" };
+    showGeo(geo);
+    geo.name = await reverseGeocode(geo.lat, geo.lon);
+    showGeo(geo);
+    try { localStorage.setItem(GEO_KEY, JSON.stringify(geo)); } catch(e){}
+    geoBtn.disabled = false;
+  }, err => {
+    const msg = err.code === 1 ? "geoDenied" : err.code === 3 ? "geoTimeout" : "geoUnavailable";
+    setStatus(t(msg));
+    geoBtn.disabled = false;
+  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 300000 });
+}
+
+geoBtn.addEventListener("click", locate);
+geoClear.addEventListener("click", () => {
+  try { localStorage.removeItem(GEO_KEY); } catch(e){}
+  applyGeoToLinks(null);
+  setStatus("");
+  geoClear.style.display = "none";
+});
+
+// Restaure la dernière position mémorisée
+try {
+  const saved = JSON.parse(localStorage.getItem(GEO_KEY) || "null");
+  if (saved && typeof saved.lat === "number" && typeof saved.lon === "number") showGeo(saved);
+} catch(e){}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
