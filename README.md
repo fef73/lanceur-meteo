@@ -42,6 +42,7 @@ Site : https://comparateur-meteo.fr/
 ## Confort d'usage
 
 - Interface bilingue FR/EN (préférence mémorisée).
+- Le résumé des fonctionnalités est aussi affiché dans le site, dans un panneau repliable juste avant le pied de page.
 - Balises de partage (Open Graph / Twitter) et données structurées pour les moteurs de recherche.
 - Statistiques de visite anonymes et sans cookie avec GoatCounter.
 
