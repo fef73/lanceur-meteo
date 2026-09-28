@@ -56,6 +56,10 @@ Site : https://comparateur-meteo.fr/
 | `og-image.png` | Image de partage |
 | `sitemap.xml`, `CNAME` | Référencement et domaine `comparateur-meteo.fr` |
 
+## Contact
+
+Un bug, une idée, une question ? Le lien **✉️ Contact / suggestion** en bas de chaque page ouvre un court formulaire, sans compte à créer : https://forms.gle/EMZtxMBJCUE6HJXp8
+
 ## Licence
 
 © 2026 Fernand (fef73) — tous droits réservés. Voir le fichier [LICENSE](LICENSE). Géocodage inverse : © contributeurs OpenStreetMap (ODbL).
