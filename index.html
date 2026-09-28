@@ -146,6 +146,20 @@
     color:var(--text-lo); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .geo-status.ok{ color:var(--live); }
+  .geo-name{
+    display:none; align-items:center; gap:8px; margin:-4px 0 14px;
+  }
+  .geo-name label{
+    flex:none; font-family:'IBM Plex Mono', monospace; font-size:11px;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--text-lo);
+  }
+  .geo-name input{
+    flex:1; min-width:0; font-family:'Space Grotesk', sans-serif; font-size:16px;
+    color:var(--text-hi); background:var(--bg-card); border:1px solid var(--hairline);
+    border-radius:10px; padding:9px 12px; outline:none;
+  }
+  .geo-name input:focus{ border-color:var(--live); }
+  .geo-name input::placeholder{ color:var(--text-lo); }
   .geo-clear{
     flex:none; background:none; border:none; color:var(--text-lo);
     font-size:16px; cursor:pointer; padding:4px 6px; display:none;
@@ -176,6 +190,10 @@
     <button class="geo-btn" id="geo-btn" type="button">📍 Ma position</button>
     <span class="geo-status" id="geo-status"></span>
     <button class="geo-clear" id="geo-clear" type="button" aria-label="Effacer la position">✕</button>
+  </div>
+  <div class="geo-name" id="geo-name">
+    <label for="geo-name-input" id="geo-name-label">Nom</label>
+    <input id="geo-name-input" type="text" maxlength="60" autocomplete="off" enterkeyhint="done" placeholder="ex : Chalet, Maison…">
   </div>
 
   <main>
@@ -269,6 +287,8 @@ const TRANSLATIONS = {
     geoUnsupported: "Non pris en charge",
     geoHttps: "Nécessite HTTPS",
     geoClear: "Effacer la position",
+    geoNameLabel: "Nom",
+    geoNamePlaceholder: "ex : Chalet, Maison…",
   },
   en: {
     eyebrow: "No-code sites / 100% AI Claude.ai by fef73",
@@ -290,6 +310,8 @@ const TRANSLATIONS = {
     geoUnsupported: "Not supported",
     geoHttps: "Requires HTTPS",
     geoClear: "Clear location",
+    geoNameLabel: "Name",
+    geoNamePlaceholder: "e.g. Chalet, Home…",
   },
 };
 
@@ -316,6 +338,8 @@ function applyTranslations(){
   document.getElementById("footer-text").textContent = t("footer");
   document.getElementById("geo-btn").textContent = t("geoBtn");
   document.getElementById("geo-clear").setAttribute("aria-label", t("geoClear"));
+  document.getElementById("geo-name-label").textContent = t("geoNameLabel");
+  document.getElementById("geo-name-input").placeholder = t("geoNamePlaceholder");
 }
 
 function setLang(newLang){
@@ -336,6 +360,10 @@ const GEO_KEY = "lanceur-meteo-geo";
 const geoBtn = document.getElementById("geo-btn");
 const geoStatus = document.getElementById("geo-status");
 const geoClear = document.getElementById("geo-clear");
+const geoNameRow = document.getElementById("geo-name");
+const geoNameInput = document.getElementById("geo-name-input");
+let currentGeo = null;
+function saveGeo(){ try { localStorage.setItem(GEO_KEY, JSON.stringify(currentGeo)); } catch(e){} }
 const cardBaseHrefs = [...document.querySelectorAll("a.card")].map(a => a.href);
 
 function setStatus(text, ok){
@@ -349,17 +377,22 @@ function applyGeoToLinks(geo){
     if (geo) {
       url.searchParams.set("lat", geo.lat.toFixed(4));
       url.searchParams.set("lon", geo.lon.toFixed(4));
-      if (geo.name) url.searchParams.set("name", geo.name);
+      if (geo.name) {
+        url.searchParams.set("nom", geo.name);   // comparateur, meteo-famille, meteo-neige
+        url.searchParams.set("ville", geo.name); // evolution-temperatures
+      }
     }
     a.href = url.toString();
   });
 }
 
 function showGeo(geo){
+  currentGeo = geo;
   applyGeoToLinks(geo);
-  const coords = geo.lat.toFixed(3) + ", " + geo.lon.toFixed(3);
-  setStatus(geo.name ? geo.name + " · " + coords : coords, true);
+  setStatus(geo.lat.toFixed(3) + ", " + geo.lon.toFixed(3), true);
   geoClear.style.display = "inline-block";
+  geoNameRow.style.display = "flex";
+  if (document.activeElement !== geoNameInput) geoNameInput.value = geo.name || "";
 }
 
 async function reverseGeocode(lat, lon){
@@ -378,11 +411,13 @@ function locate(){
   geoBtn.disabled = true;
   setStatus(t("geoBusy"));
   navigator.geolocation.getCurrentPosition(async pos => {
+    geoNameInput.value = "";
     const geo = { lat: pos.coords.latitude, lon: pos.coords.longitude, name: "" };
     showGeo(geo);
-    geo.name = await reverseGeocode(geo.lat, geo.lon);
-    showGeo(geo);
-    try { localStorage.setItem(GEO_KEY, JSON.stringify(geo)); } catch(e){}
+    saveGeo();
+    const found = await reverseGeocode(geo.lat, geo.lon);
+    // ne pas écraser un nom déjà tapé pendant la recherche
+    if (!geoNameInput.value.trim()) { geo.name = found; showGeo(geo); saveGeo(); }
     geoBtn.disabled = false;
   }, err => {
     const msg = err.code === 1 ? "geoDenied" : err.code === 3 ? "geoTimeout" : "geoUnavailable";
@@ -392,11 +427,23 @@ function locate(){
 }
 
 geoBtn.addEventListener("click", locate);
+
+// Nom saisi à la main : transmis aux sites (paramètres nom / ville)
+geoNameInput.addEventListener("input", () => {
+  if (!currentGeo) return;
+  currentGeo.name = geoNameInput.value.replace(/[<>"'&`]/g, "").trim();
+  applyGeoToLinks(currentGeo);
+  saveGeo();
+});
+geoNameInput.addEventListener("keydown", e => { if (e.key === "Enter") geoNameInput.blur(); });
 geoClear.addEventListener("click", () => {
   try { localStorage.removeItem(GEO_KEY); } catch(e){}
   applyGeoToLinks(null);
   setStatus("");
   geoClear.style.display = "none";
+  geoNameRow.style.display = "none";
+  geoNameInput.value = "";
+  currentGeo = null;
 });
 
 // Restaure la dernière position mémorisée
