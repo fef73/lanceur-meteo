@@ -25,6 +25,12 @@ Site : https://comparateur-meteo.fr/
   `nom` est lu par meteo-famille, comparateur-temperatures et meteo-neige, et `ville` par evolution-temperatures.
 - La position et le nom sont mémorisés sur l'appareil. Le bouton **✕** les efface et remet les liens d'origine.
 
+## 🎂 Mon profil
+
+- Zone repliable, facultative : **pseudo**, **date de naissance**, **heure** et **ville de naissance** (recherche via le géocodage Open-Meteo).
+- Gardé uniquement dans ce navigateur, et transmis à **meteo-famille** dans le `#` du lien (`#pseudo=…&naissance=…&heure=…&lieu=lat,lon,Nom`), jamais envoyé à un serveur. Sans profil, le lien porte `#profil=0`, qui l'efface aussi côté météo famille.
+- Bouton **Effacer mon profil**.
+
 ## Avatar personnel
 
 - Toucher l'avatar en haut à gauche ouvre un choix : avatar d'origine, 📍, ou **photo du téléphone** (recadrée au centre, réduite en 96×96).

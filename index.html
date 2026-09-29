@@ -160,6 +160,20 @@
   }
   .geo-name input:focus{ border-color:var(--live); }
   .geo-name input::placeholder{ color:var(--text-lo); }
+  .profile{ margin:-4px 0 16px; background:var(--bg-card); border:1px solid var(--hairline); border-radius:12px; }
+  .profile summary{ cursor:pointer; list-style:none; padding:11px 14px; font-size:14px; color:var(--text-hi); }
+  .profile summary::-webkit-details-marker{ display:none; }
+  .profile summary::after{ content:"▾"; float:right; color:var(--text-lo); }
+  .profile[open] summary::after{ content:"▴"; }
+  .profile-body{ padding:0 14px 14px; display:flex; flex-direction:column; gap:10px; }
+  .profile-body label{ display:flex; flex-direction:column; gap:4px; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-lo); }
+  .profile-body input{ font-family:'Space Grotesk', sans-serif; font-size:16px; color:var(--text-hi); background:var(--bg-panel); border:1px solid var(--hairline); border-radius:10px; padding:9px 12px; outline:none; color-scheme:dark; text-transform:none; letter-spacing:0; }
+  .profile-body input:focus{ border-color:var(--live); }
+  .pf-results{ display:flex; flex-direction:column; gap:4px; margin-top:-4px; }
+  .pf-results:empty{ display:none; }
+  .pf-results button{ text-align:left; font:inherit; font-size:13.5px; color:var(--text-hi); background:var(--bg-panel); border:1px solid var(--hairline); border-radius:8px; padding:8px 10px; cursor:pointer; }
+  .pf-note{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-lo); }
+  .pf-clear{ align-self:flex-start; font:inherit; font-size:12px; color:var(--text-lo); background:none; border:1px solid var(--hairline); border-radius:8px; padding:5px 10px; cursor:pointer; }
   .geo-clear{
     flex:none; background:none; border:none; color:var(--text-lo);
     font-size:16px; cursor:pointer; padding:4px 6px; display:none;
@@ -220,6 +234,19 @@
     <label for="geo-name-input" id="geo-name-label">Nom</label>
     <input id="geo-name-input" type="text" maxlength="60" autocomplete="off" enterkeyhint="done" placeholder="ex : Chalet, Maison…">
   </div>
+
+  <details class="profile" id="profile">
+    <summary id="pf-summary">🎂 Mon profil (facultatif)</summary>
+    <div class="profile-body">
+      <label><span id="pf-l-pseudo">Pseudo</span><input id="pf-pseudo" type="text" maxlength="20" autocomplete="off"></label>
+      <label><span id="pf-l-date">Date de naissance</span><input id="pf-date" type="date" min="1900-01-01"></label>
+      <label><span id="pf-l-time">Heure de naissance (facultatif)</span><input id="pf-time" type="time"></label>
+      <label><span id="pf-l-city">Ville de naissance (facultatif)</span><input id="pf-city" type="text" autocomplete="off"></label>
+      <div class="pf-results" id="pf-results"></div>
+      <div class="pf-note" id="pf-note">Reste sur ce téléphone. Transmis uniquement à la météo famille, jamais à un serveur.</div>
+      <button type="button" class="pf-clear" id="pf-clear">Effacer mon profil</button>
+    </div>
+  </details>
 
   <main>
     <a class="card" style="--accent: var(--amber)" href="https://fef73.github.io/meteo-famille/" target="_blank" rel="noopener">
@@ -370,6 +397,12 @@ const FEATURES_CONTENT = {
           <li>La position et le nom sont transmis aux quatre outils, qui s'ouvrent directement sur ce lieu</li>
           <li>Ils sont mémorisés sur l'appareil ; le bouton ✕ les efface</li>
         </ul>
+        <h3>🎂 Mon profil</h3>
+        <ul>
+          <li>Facultatif : pseudo, date de naissance, heure et ville de naissance</li>
+          <li>Dans la météo famille : ta carte porte ton pseudo, compte à rebours et prévision de ton anniversaire, confettis le jour J, et la météo, la lune et le ciel du jour de ta naissance</li>
+          <li>Tout reste sur ton téléphone : rien n'est envoyé à un serveur</li>
+        </ul>
         <h3>🙂 Avatar</h3>
         <ul>
           <li>Touche l'avatar en haut à gauche pour le changer : avatar d'origine, 📍 ou photo du téléphone</li>
@@ -408,6 +441,12 @@ const FEATURES_CONTENT = {
           <li>The town is found automatically; the “Name” field lets you pick another one (“Chalet”, “Home”…)</li>
           <li>The position and name are passed to the four tools, which open straight on that place</li>
           <li>They are remembered on the device; the ✕ button clears them</li>
+        </ul>
+        <h3>🎂 My profile</h3>
+        <ul>
+          <li>Optional: nickname, date of birth, time and place of birth</li>
+          <li>In the family forecast: your card shows your nickname, a birthday countdown and forecast, confetti on the day, and the weather, moon and sky on the day you were born</li>
+          <li>Everything stays on your phone: nothing is sent to a server</li>
         </ul>
         <h3>🙂 Avatar</h3>
         <ul>
@@ -455,6 +494,7 @@ function applyTranslations(){
   document.getElementById("card4-desc").textContent = t("card4Desc");
   document.getElementById("footer-text").textContent = t("footer");
   renderFeatures();
+  renderProfileTexts();
   document.getElementById("geo-btn").textContent = t("geoBtn");
   document.getElementById("geo-clear").setAttribute("aria-label", t("geoClear"));
   document.getElementById("geo-name-label").textContent = t("geoNameLabel");
@@ -553,6 +593,102 @@ avatarImg.addEventListener("click", openAvatarPicker);
 avatarImg.addEventListener("keydown", e => { if (e.key === "Enter") openAvatarPicker(); });
 showMyAvatar();
 
+/* ---------- Mon profil (pseudo, date et lieu de naissance) ---------- */
+// Gardé uniquement dans ce navigateur ; transmis à meteo-famille dans le « # » des liens.
+const PROFILE_STORE = "lanceur-meteo-profil";
+function getProfile(){ try { return JSON.parse(localStorage.getItem("lanceur-meteo-profil") || "null"); } catch(e){ return null; } }
+function pfTxt(k){
+  const T = {
+    fr: { summary:"🎂 Mon profil (facultatif)", pseudo:"Pseudo", date:"Date de naissance", time:"Heure de naissance (facultatif)",
+          city:"Ville de naissance (facultatif)", cityPh:"ex : Narbonne", note:"Reste sur ce téléphone. Transmis uniquement à la météo famille, jamais à un serveur.",
+          clear:"Effacer mon profil", none:"Aucune ville trouvée" },
+    en: { summary:"🎂 My profile (optional)", pseudo:"Nickname", date:"Date of birth", time:"Time of birth (optional)",
+          city:"Place of birth (optional)", cityPh:"e.g. Narbonne", note:"Stays on this phone. Only passed to the family forecast, never to a server.",
+          clear:"Clear my profile", none:"No town found" },
+  };
+  return (T[lang] || T.fr)[k];
+}
+function renderProfileTexts(){
+  const set = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+  set("pf-l-pseudo", pfTxt("pseudo")); set("pf-l-date", pfTxt("date")); set("pf-l-time", pfTxt("time"));
+  set("pf-l-city", pfTxt("city")); set("pf-note", pfTxt("note")); set("pf-clear", pfTxt("clear"));
+  const c = document.getElementById("pf-city"); if (c) c.placeholder = pfTxt("cityPh");
+  const pf = getProfile();
+  const sum = document.getElementById("pf-summary");
+  if (sum) {
+    if (pf && pf.naissance) {
+      const d = new Date(pf.naissance + "T12:00:00Z").toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", { timeZone: "UTC" });
+      sum.textContent = "🎂 " + [pf.pseudo, d, pf.lieu && pf.lieu.nom].filter(Boolean).join(" · ");
+    } else sum.textContent = pfTxt("summary");
+  }
+}
+function saveProfileFromForm(){
+  const pseudo = document.getElementById("pf-pseudo").value.replace(/[<>"'&`]/g, "").trim().slice(0, 20);
+  const naissance = document.getElementById("pf-date").value;
+  const heure = document.getElementById("pf-time").value;
+  const old = getProfile() || {};
+  const valid = /^\d{4}-\d{2}-\d{2}$/.test(naissance) && naissance >= "1900-01-01" && naissance <= new Date().toISOString().slice(0, 10);
+  const pf = { pseudo, naissance: valid ? naissance : "", heure: /^\d{2}:\d{2}$/.test(heure) ? heure : "", lieu: old.lieu || null };
+  try {
+    if (!pf.pseudo && !pf.naissance && !pf.lieu) localStorage.removeItem(PROFILE_STORE);
+    else localStorage.setItem(PROFILE_STORE, JSON.stringify(pf));
+  } catch(e){}
+  renderProfileTexts();
+  applyGeoToLinks(currentGeo);
+}
+function fillProfileForm(){
+  const pf = getProfile() || {};
+  document.getElementById("pf-pseudo").value = pf.pseudo || "";
+  document.getElementById("pf-date").value = pf.naissance || "";
+  document.getElementById("pf-time").value = pf.heure || "";
+  document.getElementById("pf-city").value = pf.lieu ? pf.lieu.label || pf.lieu.nom : "";
+  document.getElementById("pf-date").max = new Date().toISOString().slice(0, 10);
+}
+(function initProfile(){
+  ["pf-pseudo", "pf-date", "pf-time"].forEach(id => document.getElementById(id).addEventListener("change", saveProfileFromForm));
+  document.getElementById("pf-pseudo").addEventListener("input", saveProfileFromForm);
+  // recherche de la ville de naissance (géocodage Open-Meteo, sans clé)
+  const cityIn = document.getElementById("pf-city"), res = document.getElementById("pf-results");
+  let timer = null;
+  cityIn.addEventListener("input", () => {
+    clearTimeout(timer);
+    const q = cityIn.value.trim();
+    if (!q) {   // champ vidé : on retire la ville de naissance
+      const pf = getProfile(); if (pf) { pf.lieu = null; try { localStorage.setItem(PROFILE_STORE, JSON.stringify(pf)); } catch(e){} }
+      res.innerHTML = ""; renderProfileTexts(); applyGeoToLinks(currentGeo); return;
+    }
+    if (q.length < 2) { res.innerHTML = ""; return; }
+    timer = setTimeout(async () => {
+      try {
+        const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=${lang}&format=json`);
+        const d = await r.json();
+        const list = d.results || [];
+        res.innerHTML = list.length ? "" : `<div class="pf-note">${pfTxt("none")}</div>`;
+        list.forEach(c => {
+          const b = document.createElement("button");
+          b.type = "button";
+          const label = [c.name, c.admin1, c.country].filter(Boolean).join(", ");
+          b.textContent = label;
+          b.addEventListener("click", () => {
+            const pf = getProfile() || { pseudo: "", naissance: "", heure: "" };
+            pf.lieu = { lat: c.latitude, lon: c.longitude, nom: String(c.name).replace(/[<>"'&`,]/g, "").slice(0, 60), label };
+            try { localStorage.setItem(PROFILE_STORE, JSON.stringify(pf)); } catch(e){}
+            cityIn.value = label; res.innerHTML = "";
+            renderProfileTexts(); applyGeoToLinks(currentGeo);
+          });
+          res.appendChild(b);
+        });
+      } catch(e) { res.innerHTML = ""; }
+    }, 350);
+  });
+  document.getElementById("pf-clear").addEventListener("click", () => {
+    try { localStorage.removeItem(PROFILE_STORE); } catch(e){}
+    fillProfileForm(); res.innerHTML = ""; renderProfileTexts(); applyGeoToLinks(currentGeo);
+  });
+  fillProfileForm();
+  renderProfileTexts();
+})();
+
 /* ---------- Géolocalisation ---------- */
 const GEO_KEY = "lanceur-meteo-geo";
 const geoBtn = document.getElementById("geo-btn");
@@ -579,9 +715,22 @@ function applyGeoToLinks(geo){
         url.searchParams.set("nom", geo.name);   // comparateur, meteo-famille, meteo-neige
         url.searchParams.set("ville", geo.name); // evolution-temperatures
       }
-      // Avatar choisi : transmis à meteo-famille dans le « # » (jamais envoyé au serveur)
+    }
+    // Avatar et profil : transmis à meteo-famille dans le « # » (jamais envoyé au serveur)
+    if (url.pathname.includes("meteo-famille")) {
+      const h = new URLSearchParams();
       const av = getMyAvatar();
-      if (av && url.pathname.includes("meteo-famille")) url.hash = new URLSearchParams({ avatar: av }).toString();
+      if (geo && av) h.set("avatar", av);
+      const pf = getProfile();
+      if (pf && pf.naissance) {
+        if (pf.pseudo) h.set("pseudo", pf.pseudo);
+        h.set("naissance", pf.naissance);
+        if (pf.heure) h.set("heure", pf.heure);
+        if (pf.lieu) h.set("lieu", `${pf.lieu.lat.toFixed(4)},${pf.lieu.lon.toFixed(4)},${pf.lieu.nom}`);
+      } else {
+        h.set("profil", "0");
+      }
+      url.hash = h.toString();
     }
     a.href = url.toString();
   });
@@ -652,6 +801,8 @@ try {
   const saved = JSON.parse(localStorage.getItem(GEO_KEY) || "null");
   if (saved && typeof saved.lat === "number" && typeof saved.lon === "number") showGeo(saved);
 } catch(e){}
+// Liens des cartes : profil transmis même sans position GPS
+applyGeoToLinks(currentGeo);
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
