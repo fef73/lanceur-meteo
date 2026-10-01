@@ -4,7 +4,7 @@ Page d'accueil mono-fichier (HTML/CSS/JS, sans backend) qui regroupe les quatre 
 
 Site : https://comparateur-meteo.fr/
 
-Présentation des six sites, avec des textes prêts à partager : [PRESENTATION.md](PRESENTATION.md)
+Présentation des six sites, avec des textes prêts à partager : [comparateur-meteo.fr/presentation.html](https://comparateur-meteo.fr/presentation.html) (version texte : [PRESENTATION.md](PRESENTATION.md))
 
 ## Les cinq outils
 
