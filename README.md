@@ -1,71 +1,85 @@
-# Lanceur météo — comparateur-meteo.fr
+# Ciel des proches — Qui a le ciel le plus clément ?
 
-Page d'accueil mono-fichier (HTML/CSS/JS, sans backend) qui regroupe les quatre outils météo de fef73. Elle s'installe comme une appli sur smartphone et peut transmettre la position GPS du téléphone à chacun des sites.
+Application d'astrologie mono-fichier (HTML/CSS/JS, sans backend) qui calcule le thème natal de chaque proche et sa « météo astrale » du jour, à partir de la date, de l'heure et du lieu de naissance. Les positions des planètes sont calculées directement dans le navigateur, sans bibliothèque ni clé API.
 
-Site : https://comparateur-meteo.fr/
+Site : https://fef73.github.io/meteo-astro/ — accessible aussi depuis le lanceur [comparateur-meteo.fr](https://comparateur-meteo.fr/).
 
-## Les quatre outils
+## Bulletin cosmique
 
-| Carte | Site | Rôle |
-|---|---|---|
-| Prévisions Météo famille | [meteo-famille](https://fef73.github.io/meteo-famille/) | Aujourd'hui → 7 jours, là où vit chaque membre de la famille |
-| Prévisions Météo villes | [comparateur-temperatures](https://fef73.github.io/comparateur-temperatures/) | Comparateur de températures entre villes, même en altitude |
-| Historique Météo ville | [evolution-temperatures](https://fef73.github.io/evolution-temperatures/) | Évolution des températures d'une ville depuis 1940 |
-| Historique Météo neige | [meteo-neige](https://fef73.github.io/meteo-neige/) | Chutes de neige et neige restante au sol |
+- Signe traversé par le Soleil et par la Lune.
+- **Phase lunaire** avec son icône et le pourcentage éclairé.
+- **Aspect le plus serré** du jour entre deux planètes (conjonction, sextile, carré, trigone, opposition), avec son orbe.
+- **Planètes rétrogrades** du jour.
 
-## 📍 Ma position (GPS)
+## Cartes par personne
 
-- Le bouton **📍 Ma position** récupère les coordonnées GPS du téléphone (API Geolocation du navigateur, avec l'autorisation de l'utilisateur, en HTTPS).
-- La commune est retrouvée automatiquement par géocodage inverse ([Nominatim / OpenStreetMap](https://nominatim.openstreetmap.org/), sans clé).
-- Une zone **Nom**, pré-remplie avec la commune, permet d'afficher un autre nom (« Chalet », « Maison »…).
-- Les coordonnées et le nom sont ajoutés aux liens des quatre cartes :
-  ```
-  ?lat=45.5660&lon=5.9200&nom=Chambéry&ville=Chambéry
-  ```
-  `nom` est lu par meteo-famille, comparateur-temperatures et meteo-neige, et `ville` par evolution-temperatures.
-- La position et le nom sont mémorisés sur l'appareil. Le bouton **✕** les efface et remet les liens d'origine.
+- **Note globale sur 100** et étoiles pour ❤️ Amour, 💼 Travail et ⚡ Énergie.
+- Notes calculées d'après les **transits** : aspects entre les planètes du jour (Soleil → Saturne) et celles du thème natal, pondérés par leur nature (harmonieux ou tendu), leur orbe et la planète en jeu, plus l'accord entre la Lune du jour et la Lune natale.
+- **Deux phrases explicatives** tirées des aspects les plus marquants (« ☉ Soleil en trigone avec votre Lune : bon moment pour… »).
+- Signes du Soleil, de la Lune et de l'Ascendant de la personne.
+- Classement 🥇🥈🥉 quand plusieurs thèmes sont enregistrés.
+- 4 périodes : aujourd'hui, demain, après-demain, 7 jours. Sur 7 jours, les notes sont des moyennes, avec le **meilleur jour** et le **plus délicat**.
 
-## 🎂 Mon profil
+## 🏆 Palmarès
 
-- Zone repliable, facultative : **pseudo**, **date de naissance**, **heure** et **ville de naissance** (recherche via le géocodage Open-Meteo).
-- Gardé uniquement dans ce navigateur, et transmis à **meteo-famille** dans le `#` du lien (`#pseudo=…&naissance=…&heure=…&lieu=lat,lon,Nom`), jamais envoyé à un serveur. Sans profil, le lien porte `#profil=0`, qui l'efface aussi côté météo famille.
-- Bouton **Effacer mon profil**.
+- Tous les thèmes classés par note, avec une barre à la couleur de chaque carte.
+- **Champions par domaine** : meilleure note en amour, travail et énergie.
+- Suit la période choisie ; une ligne touchée ouvre le thème natal correspondant.
+- Affiché à partir de 2 thèmes.
 
-## Avatar personnel
+## 🪐 Thème natal
 
-- Toucher l'avatar en haut à gauche ouvre un choix : avatar d'origine, 📍, ou **photo du téléphone** (recadrée au centre, réduite en 96×96).
-- L'avatar choisi remplace celui de l'en-tête et est mémorisé sur l'appareil.
-- En mode GPS, il est transmis à **meteo-famille** et devient celui de la carte et de la courbe « Moi ». Il passe dans le `#` de l'adresse (`#avatar=…`), qui n'est jamais envoyé au serveur.
+- **Roue du thème** en SVG : signes colorés par élément (feu, terre, air, eau), 12 maisons, Ascendant (AS), Milieu du Ciel (MC) et aspects entre planètes (vert harmonieux, rouge tendu).
+- **Tableau des positions** du Soleil à Neptune : signe, degré, maison et rétrogradation (℞).
+- **Interprétation** : Soleil, Lune, Ascendant, planètes personnelles et sociales (Mercure → Saturne) avec leur maison, et élément dominant.
+- **Heure inconnue** acceptée : l'Ascendant, le Milieu du Ciel et les maisons sont alors masqués, la Lune est calculée à midi.
+- **Info-bulles** au survol (ou au toucher sur mobile) : planètes, signes, maisons, aspects, AS, MC, notes et étoiles.
 
-## Appli et hors connexion
+## Ajout d'un thème
 
-- Installable sur l'écran d'accueil (manifest, icônes 192 / 512 / maskable).
-- Service worker (`sw.js`) : réseau d'abord, copie locale si hors connexion. Le lanceur s'ouvre donc sans réseau.
-- Les quatre sites ont aussi leur propre service worker, et restent utilisables sans réseau après une première visite :
-  - historiques ville et neige : les jours déjà consultés sont gardés dans le téléphone (IndexedDB), avec une sauvegarde et une restauration en fichier JSON ;
-  - météo famille et comparateur : la dernière prévision reçue est réaffichée, avec un bandeau « 📴 Hors connexion — données du … ».
+- Formulaire **＋ Ajouter un thème** : prénom, date et heure de naissance, lieu.
+- **Saisie au clavier** (pratique sur Android) : `14071985` devient `14/07/1985`, `0830` devient `08:30` ; `8h30`, `14.07.1985` sont aussi acceptés. Dates et heures impossibles refusées avec un message clair.
+- Lieu cherché par le [géocodage Open-Meteo](https://open-meteo.com/en/docs/geocoding-api) (gratuit, sans clé), qui fournit aussi le **fuseau horaire IANA**.
+- L'heure locale est convertie en heure universelle avec le fuseau du lieu, **heure d'été historique comprise** (`Intl.DateTimeFormat`).
+- Suppression d'un thème avec la croix ✕ de sa carte.
+- Une carte « Exemple » s'affiche tant qu'aucun thème n'est ajouté.
+
+## Calculs astronomiques
+
+- Positions du Soleil, de la Lune et des planètes jusqu'à Neptune à partir des **éléments orbitaux de Paul Schlyter** (équation de Kepler, perturbations principales de la Lune, de Jupiter, de Saturne et d'Uranus), longitudes écliptiques géocentriques.
+- Écart inférieur à **0,05°** avec la bibliothèque de référence `astronomy-engine`, vérifié de 1925 à 2060.
+- **Ascendant et Milieu du Ciel** à partir du temps sidéral local et de la latitude.
+- **Maisons égales** (12 parts de 30° depuis l'Ascendant).
+- Rétrogradation détectée en comparant la position à 24 h d'intervalle.
+
+## 📖 Comprendre un thème
+
+Panneau repliable qui explique le rôle des planètes (*quoi*), des signes (*comment*) et des maisons (*où*), d'où viennent les maisons, les 12 domaines et le choix des maisons égales.
 
 ## Confort d'usage
 
-- Interface bilingue FR/EN (préférence mémorisée).
-- Le résumé des fonctionnalités est aussi affiché dans le site, dans un panneau repliable juste avant le pied de page.
-- Balises de partage (Open Graph / Twitter) et données structurées pour les moteurs de recherche.
-- Statistiques de visite anonymes et sans cookie avec GoatCounter.
+- Interface bilingue **FR/EN** (préférence mémorisée, langue du navigateur au premier passage), y compris les textes d'interprétation et les dates.
+- Thèmes enregistrés **uniquement dans le navigateur** (`localStorage`), jamais envoyés à un serveur.
+- Bouton 📤 Partager (partage natif sur mobile, sinon copie du lien).
+- Le fonctionnement du site est aussi résumé dans un panneau repliable « ✨ Fonctionnalités du site » juste avant le pied de page.
+- Design commun aux autres sites de fef73 : fond nuit, polices Fraunces, Space Grotesk et IBM Plex Mono.
+
+## Avertissement
+
+Contenu à visée ludique : l'astrologie n'a pas de valeur prédictive démontrée.
 
 ## Fichiers
 
 | Fichier | Rôle |
 |---|---|
-| `index.html` | La page du lanceur |
-| `sw.js` | Service worker (hors connexion) |
-| `manifest.json`, `icon-*.png` | Installation comme appli |
-| `og-image.png` | Image de partage |
-| `sitemap.xml`, `CNAME` | Référencement et domaine `comparateur-meteo.fr` |
-
-## Contact
-
-Un bug, une idée, une question ? Le lien **✉️ Contact / suggestion** en bas de chaque page ouvre un court formulaire, sans compte à créer : https://forms.gle/EMZtxMBJCUE6HJXp8
+| `index.html` | Le site complet (HTML, CSS et JavaScript) |
+| `README.md` | Ce fichier |
+| `LICENSE` | Droits d'auteur et conditions de réutilisation |
 
 ## Licence
 
-© 2026 Fernand (fef73) — tous droits réservés. Voir le fichier [LICENSE](LICENSE). Géocodage inverse : © contributeurs OpenStreetMap (ODbL).
+© 2026 Fernand (fef73) — tous droits réservés. Voir le fichier [LICENSE](LICENSE). Calculs astronomiques d'après les éléments orbitaux publiés par Paul Schlyter. Le géocodage reste soumis à la licence de son fournisseur (Open-Meteo, CC BY 4.0).
+
+---
+
+Créé par fef73 avec [Claude](https://claude.ai).
