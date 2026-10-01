@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Générateur d'affiche — Le temps qu'il faisait</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b1622">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style id="page-size">@page { size: A4 portrait; margin: 0; }</style>
+<style>
+  :root{
+    --bg:#0b1622; --bg-panel:#101f30; --bg-card:#132539; --hairline:#22384f;
+    --text-hi:#f3f6f9; --text-lo:#8fa4b8; --live:#7ee4b8; --amber:#f4a261; --coral:#e76f51; --gold:#ffd166;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text-hi);font-family:'Space Grotesk',sans-serif;padding:20px 16px 40px;}
+  .app{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start;}
+  @media (max-width:860px){.app{grid-template-columns:1fr;}}
+  h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:24px;margin:0 0 4px;}
+  .sub{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-lo);margin:0 0 18px;}
+
+  /* Formulaire */
+  .panel{background:var(--bg-panel);border:1px solid var(--hairline);border-radius:16px;padding:18px;position:sticky;top:16px;}
+  .field{margin-bottom:12px;position:relative;}
+  .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-lo);margin-bottom:5px;}
+  .field input,.field select,.field textarea{width:100%;background:var(--bg-card);color:var(--text-hi);border:1px solid var(--hairline);
+    border-radius:8px;padding:9px 10px;font:14px 'Space Grotesk',sans-serif;color-scheme:dark;}
+  .field textarea{resize:vertical;min-height:54px;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--live);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-lo);margin-top:5px;font-family:'IBM Plex Mono',monospace;}
+  .suggest{position:absolute;left:0;right:0;top:100%;z-index:20;background:var(--bg-card);border:1px solid var(--hairline);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);}
+  .suggest button{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--hairline);color:var(--text-hi);padding:9px 12px;cursor:pointer;font:13px 'Space Grotesk',sans-serif;}
+  .suggest button:last-child{border-bottom:none;}
+  .suggest button:hover{background:rgba(126,228,184,.08);}
+  .suggest small{color:var(--text-lo);font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .btn{font:600 14px 'Space Grotesk',sans-serif;border-radius:10px;padding:11px 16px;cursor:pointer;border:1px solid var(--hairline);background:var(--bg-card);color:var(--text-hi);width:100%;margin-top:6px;}
+  .btn-main{background:var(--live);border-color:var(--live);color:#0b1622;}
+  .btn:disabled{opacity:.5;cursor:default;}
+  .msg{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-lo);margin-top:10px;min-height:1.2em;}
+  .msg.err{color:var(--coral);}
+  .help{font-size:12px;color:var(--text-lo);line-height:1.5;margin-top:14px;padding-top:12px;border-top:1px solid var(--hairline);}
+  .hidden{display:none !important;}
+
+  /* Zone d'aperçu */
+  .preview{display:flex;justify-content:center;}
+  .preview .sheet-wrap{width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+
+  /* ===== Affiche ===== */
+  .poster{
+    --p-bg:#0e1c2c; --p-ink:#f3efe6; --p-soft:#9fb1c3; --p-line:rgba(243,239,230,.16); --p-accent:#f4a261; --p-accent2:#7ee4b8;
+    container-type:inline-size; width:100%; aspect-ratio:210/297; position:relative; overflow:hidden;
+    background:radial-gradient(120% 70% at 50% 0%, #1d3550 0%, var(--p-bg) 60%); color:var(--p-ink);
+    font-family:'Space Grotesk',sans-serif; display:flex; flex-direction:column;
+    padding:8cqw 8cqw 6cqw;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .poster.paper{
+    --p-bg:#f6f1e7; --p-ink:#1b2a3a; --p-soft:#5f6f80; --p-line:rgba(27,42,58,.16); --p-accent:#c8642a; --p-accent2:#2a7f72;
+    background:var(--p-bg);
+  }
+  .poster .stars{position:absolute;inset:0;pointer-events:none;opacity:.55;}
+  .poster.paper .stars{display:none;}
+  .poster .top{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.35em;text-transform:uppercase;color:var(--p-soft);text-align:center;position:relative;}
+  .poster .title{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:10.5cqw;line-height:1.02;text-align:center;margin:2.2cqw 0 2.6cqw;position:relative;letter-spacing:-.01em;}
+  .poster .when{font-family:'Fraunces',serif;font-size:3.6cqw;text-align:center;color:var(--p-ink);position:relative;}
+  .poster .where{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--p-soft);margin-top:1.2cqw;position:relative;}
+  .poster .hero{display:flex;align-items:center;justify-content:center;gap:5cqw;margin:9cqw 0 7cqw;position:relative;}
+  .poster .wx-ico{width:22cqw;height:22cqw;}
+  .poster .temps{text-align:left;}
+  .poster .wx-label{font-family:'Fraunces',serif;font-style:italic;font-size:5cqw;line-height:1.1;margin-bottom:1.4cqw;}
+  .poster .range{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:8.4cqw;line-height:1;white-space:nowrap;}
+  .poster .range .arrow{color:var(--p-soft);font-weight:400;font-size:5cqw;margin:0 1cqw;vertical-align:.6cqw;}
+  .poster .range-cap{font-family:'IBM Plex Mono',monospace;font-size:1.9cqw;color:var(--p-soft);letter-spacing:.08em;text-transform:uppercase;margin-top:1.2cqw;}
+  .poster .grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--p-line);border-bottom:1px solid var(--p-line);position:relative;}
+  .poster .cell{padding:4.4cqw 1.5cqw;text-align:center;}
+  .poster .cell + .cell{border-left:1px solid var(--p-line);}
+  .poster .cell:nth-child(4){border-left:none;}
+  .poster .cell:nth-child(n+4){border-top:1px solid var(--p-line);}
+  .poster .k{font-family:'IBM Plex Mono',monospace;font-size:1.75cqw;letter-spacing:.12em;text-transform:uppercase;color:var(--p-soft);}
+  .poster .v{font-family:'Fraunces',serif;font-size:4.6cqw;margin-top:1cqw;line-height:1.1;}
+  .poster .v small{font-size:2.6cqw;color:var(--p-soft);}
+  .poster .moon{width:5.6cqw;height:5.6cqw;vertical-align:-1.2cqw;margin-right:1cqw;}
+  .poster .rank{margin-top:8cqw;position:relative;}
+  .poster .rank-txt{font-family:'Fraunces',serif;font-size:3.5cqw;text-align:center;line-height:1.3;}
+  .poster .rank-txt b{color:var(--p-accent);font-weight:600;}
+  .poster .bars{display:block;width:100%;height:17cqw;margin-top:3cqw;}
+  .poster .bars-wrap{position:relative;}
+  .poster .me-year{position:absolute;bottom:-3.2cqw;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:1.9cqw;font-weight:600;color:var(--p-accent);}
+  .poster .bars-cap{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:1.7cqw;color:var(--p-soft);margin-top:4cqw;}
+  .poster .note{font-family:'Fraunces',serif;font-style:italic;font-size:3.8cqw;text-align:center;margin-top:7cqw;color:var(--p-ink);position:relative;}
+  .poster .foot{margin-top:auto;padding-top:3cqw;display:flex;justify-content:space-between;align-items:flex-end;gap:2cqw;
+    font-family:'IBM Plex Mono',monospace;font-size:1.55cqw;color:var(--p-soft);position:relative;line-height:1.5;}
+  .poster .foot .sign{font-size:2cqw;letter-spacing:.1em;text-transform:uppercase;text-align:right;}
+
+  @media print{
+    body{background:none;padding:0;}
+    .panel,h1,.sub{display:none !important;}
+    .app{display:block;max-width:none;}
+    .preview .sheet-wrap{max-width:none;box-shadow:none;width:var(--print-w,210mm);}
+    .poster{width:var(--print-w,210mm);}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div>
+    <h1>Le temps qu'il faisait</h1>
+    <p class="sub">Générateur d'affiche · usage interne</p>
+    <div class="panel">
+      <div class="field"><label for="f-kind">Occasion</label>
+        <select id="f-kind">
+          <option value="birthF">Naissance (fille)</option>
+          <option value="birthM">Naissance (garçon)</option>
+          <option value="wedding">Mariage</option>
+          <option value="meet">Rencontre</option>
+          <option value="custom">Titre libre</option>
+        </select></div>
+      <div class="field"><label for="f-name" id="l-name">Prénom(s)</label><input id="f-name" type="text" maxlength="40" placeholder="Léa" value="Léa"></div>
+      <div class="field hidden" id="custom-wrap"><label for="f-custom">Titre complet</label><input id="f-custom" type="text" maxlength="60" placeholder="Notre premier rendez-vous"></div>
+      <div class="row2">
+        <div class="field"><label for="f-date">Date</label><input id="f-date" type="text" inputmode="numeric" maxlength="10" placeholder="JJ/MM/AAAA" value="14/07/1985"></div>
+        <div class="field"><label for="f-time">Heure</label><input id="f-time" type="text" inputmode="numeric" maxlength="5" placeholder="HH:MM" value="08:30">
+          <label class="check"><input type="checkbox" id="f-notime"> inconnue</label></div>
+      </div>
+      <div class="field"><label for="f-place">Lieu</label><input id="f-place" type="text" autocomplete="off" placeholder="Ville…" value="">
+        <div class="suggest hidden" id="suggest"></div></div>
+      <div class="field"><label for="f-note">Message (facultatif)</label><textarea id="f-note" maxlength="140" placeholder="Bienvenue parmi nous !"></textarea></div>
+      <div class="row2">
+        <div class="field"><label for="f-lang">Langue</label><select id="f-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
+        <div class="field"><label for="f-theme">Style</label><select id="f-theme"><option value="night">Nuit</option><option value="paper">Papier</option></select></div>
+      </div>
+      <div class="field"><label for="f-size">Format d'impression</label><select id="f-size"><option value="A4">A4 (21 × 29,7 cm)</option><option value="A3">A3 (29,7 × 42 cm)</option></select></div>
+      <button class="btn btn-main" id="go" type="button">Générer l'affiche</button>
+      <button class="btn" id="print" type="button" disabled>🖨️ Imprimer / Enregistrer en PDF</button>
+      <div class="msg" id="msg"></div>
+      <div class="help">
+        <b>Pour livrer un PDF :</b> « Imprimer », puis destination « Enregistrer au format PDF », marges « Aucune », cocher « Graphiques d'arrière-plan ».<br>
+        Données disponibles du 01/01/1940 à il y a environ 5 jours. Météo reconstituée par la réanalyse ERA5 (maille d'environ 25 km).
+      </div>
+    </div>
+  </div>
+
+  <div class="preview">
+    <div class="sheet-wrap"><div class="poster" id="poster"></div></div>
+  </div>
+</div>
+
+<script>
+// ---------- Textes de l'affiche ----------
+const T = {
+  fr: {
+    locale: 'fr-FR',
+    top: { birthF: 'Le jour où', birthM: 'Le jour où', wedding: 'Le jour où', meet: 'Le jour où', custom: '' },
+    title: { birthF: n => `${n} est née`, birthM: n => `${n} est né`, wedding: n => `${n} se sont dit oui`, meet: n => `${n} se sont rencontrés`, custom: (n, c) => c || n },
+    at: 'à', range: 'Minimum → maximum de la journée',
+    k: { atHour: "À l'heure dite", noon: 'À midi', rain: 'Pluie', snow: 'Neige', wind: 'Rafales', sun: 'Soleil', day: 'Durée du jour', moon: 'Lune' },
+    none: 'aucune', unknown: 'heure inconnue',
+    warmer: (p, d) => `Plus chaud que <b>${p} %</b> des ${d} depuis 1940`,
+    colder: (p, d) => `Plus frais que <b>${p} %</b> des ${d} depuis 1940`,
+    hottest: d => `Le <b>${d}</b> le plus chaud depuis 1940`,
+    coldest: d => `Le <b>${d}</b> le plus frais depuis 1940`,
+    barsCap: 'température maximale de chaque année', sign: 'Signe solaire',
+    src: 'Données Open-Meteo.com · réanalyse ERA5 (Copernicus)',
+    phases: ['Nouvelle lune', 'Premier croissant', 'Premier quartier', 'Lune gibbeuse', 'Pleine lune', 'Lune gibbeuse', 'Dernier quartier', 'Dernier croissant'],
+    signs: ['Bélier', 'Taureau', 'Gémeaux', 'Cancer', 'Lion', 'Vierge', 'Balance', 'Scorpion', 'Sagittaire', 'Capricorne', 'Verseau', 'Poissons'],
+    wx: { clear: 'Grand soleil', mostly: 'Belles éclaircies', cloudy: 'Ciel couvert', fog: 'Brouillard', drizzle: 'Bruine', rain: 'Pluie', snow: 'Neige', showers: 'Averses', snowshowers: 'Averses de neige', storm: 'Orages' }
+  },
+  en: {
+    locale: 'en-GB',
+    top: { birthF: 'The day', birthM: 'The day', wedding: 'The day', meet: 'The day', custom: '' },
+    title: { birthF: n => `${n} was born`, birthM: n => `${n} was born`, wedding: n => `${n} said yes`, meet: n => `${n} met`, custom: (n, c) => c || n },
+    at: 'at', range: "The day's low → high",
+    k: { atHour: 'At that hour', noon: 'At noon', rain: 'Rain', snow: 'Snow', wind: 'Gusts', sun: 'Sun', day: 'Daylight', moon: 'Moon' },
+    none: 'none', unknown: 'time unknown',
+    warmer: (p, d) => `Warmer than <b>${p}%</b> of all ${d} since 1940`,
+    colder: (p, d) => `Cooler than <b>${p}%</b> of all ${d} since 1940`,
+    hottest: d => `The hottest <b>${d}</b> since 1940`,
+    coldest: d => `The coolest <b>${d}</b> since 1940`,
+    barsCap: 'maximum temperature, year by year', sign: 'Sun sign',
+    src: 'Data Open-Meteo.com · ERA5 reanalysis (Copernicus)',
+    phases: ['New moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full moon', 'Waning gibbous', 'Last quarter', 'Waning crescent'],
+    signs: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'],
+    wx: { clear: 'Clear skies', mostly: 'Sunny spells', cloudy: 'Overcast', fog: 'Fog', drizzle: 'Drizzle', rain: 'Rain', snow: 'Snow', showers: 'Showers', snowshowers: 'Snow showers', storm: 'Thunderstorms' }
+  }
+};
+const SIGN_GLYPH = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+
+// ---------- Utilitaires ----------
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const fmtNum = (x, lang, d = 0) => x.toLocaleString(T[lang].locale, { maximumFractionDigits: d, minimumFractionDigits: d });
+
+function autoFormat(input, groups, sep) {
+  input.addEventListener('input', e => {
+    if (e.inputType && e.inputType.startsWith('delete')) return;
+    const d = input.value.replace(/\D/g, '');
+    let out = '', i = 0;
+    for (let g = 0; g < groups.length && i < d.length; g++) {
+      const part = d.slice(i, i + groups[g]); out += part; i += part.length;
+      if (part.length === groups[g] && g < groups.length - 1) out += sep;
+    }
+    input.value = out;
+  });
+}
+function parseDate(str) {
+  const m = str.trim().match(/^(\d{1,2})\D+(\d{1,2})\D+(\d{4})$/) || str.replace(/\D/g, '').match(/^(\d{2})(\d{2})(\d{4})$/);
+  if (!m) return null;
+  const d = +m[1], mo = +m[2], y = +m[3];
+  const t = new Date(Date.UTC(y, mo - 1, d));
+  if (t.getUTCFullYear() !== y || t.getUTCMonth() !== mo - 1 || t.getUTCDate() !== d) return null;
+  return { y, mo, d, iso: `${y}-${pad(mo)}-${pad(d)}` };
+}
+function parseTime(str) {
+  const m = str.trim().match(/^(\d{1,2})\s*[:h.]\s*(\d{0,2})$/i);
+  let h, mi;
+  if (m) { h = +m[1]; mi = m[2] ? +m[2] : 0; }
+  else { const d = str.replace(/\D/g, ''); if (!d || d.length > 4) return null;
+    if (d.length <= 2) { h = +d; mi = 0; } else { h = +d.slice(0, -2); mi = +d.slice(-2); } }
+  if (h > 23 || mi > 59) return null;
+  return { h, mi };
+}
+
+function wxKind(code) {
+  if (code === 0) return 'clear';
+  if (code <= 2) return 'mostly';
+  if (code === 3) return 'cloudy';
+  if (code === 45 || code === 48) return 'fog';
+  if (code >= 51 && code <= 57) return 'drizzle';
+  if (code >= 61 && code <= 67) return 'rain';
+  if (code >= 71 && code <= 77) return 'snow';
+  if (code >= 80 && code <= 82) return 'showers';
+  if (code === 85 || code === 86) return 'snowshowers';
+  if (code >= 95) return 'storm';
+  return 'cloudy';
+}
+
+// Icônes météo dessinées (traits fins, couleur de l'affiche)
+function wxIcon(kind) {
+  const sun = (cx, cy, r) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--p-accent)"/>` +
+    Array.from({ length: 8 }, (_, i) => { const a = i * Math.PI / 4, r1 = r + 6, r2 = r + 13;
+      return `<line x1="${cx + r1 * Math.cos(a)}" y1="${cy + r1 * Math.sin(a)}" x2="${cx + r2 * Math.cos(a)}" y2="${cy + r2 * Math.sin(a)}" stroke="var(--p-accent)" stroke-width="3.2" stroke-linecap="round"/>`; }).join('');
+  const cloud = (dx, dy, fill) => `<path transform="translate(${dx} ${dy})" d="M18 64 a16 16 0 0 1 3-31.7 a22 22 0 0 1 42.5-6 a17 17 0 0 1 16.5 21 a13 13 0 0 1-3 16.7z" fill="${fill}" stroke="var(--p-ink)" stroke-width="2.6" stroke-linejoin="round"/>`;
+  const drops = (n, snow) => Array.from({ length: n }, (_, i) => { const x = 34 + i * 16;
+    return snow ? `<text x="${x}" y="104" font-size="16" text-anchor="middle" fill="var(--p-ink)">❄</text>`
+                : `<line x1="${x}" y1="88" x2="${x - 5}" y2="102" stroke="var(--p-accent2)" stroke-width="3.2" stroke-linecap="round"/>`; }).join('');
+  const bg = 'var(--p-bg)';
+  let s = '';
+  switch (kind) {
+    case 'clear': s = sun(60, 60, 22); break;
+    case 'mostly': s = sun(44, 40, 16) + cloud(18, 22, bg); break;
+    case 'cloudy': s = cloud(8, 4, bg) + cloud(20, 22, bg); break;
+    case 'fog': s = cloud(14, 2, bg) + [80, 92, 104].map((y, i) => `<line x1="${22 + i * 6}" y1="${y}" x2="${98 - i * 4}" y2="${y}" stroke="var(--p-soft)" stroke-width="3.2" stroke-linecap="round"/>`).join(''); break;
+    case 'drizzle': case 'rain': case 'showers': s = (kind === 'showers' ? sun(78, 30, 13) : '') + cloud(14, 8, bg) + drops(kind === 'drizzle' ? 3 : 4, false); break;
+    case 'snow': case 'snowshowers': s = cloud(14, 8, bg) + drops(4, true); break;
+    case 'storm': s = cloud(14, 6, bg) + `<path d="M62 70 L50 92 H62 L54 112 L76 84 H64 L72 70z" fill="var(--p-accent)"/>`; break;
+  }
+  return `<svg class="wx-ico" viewBox="0 0 120 120">${s}</svg>`;
+}
+
+// Phase de lune (fraction 0..1 depuis la nouvelle lune) et dessin
+function moonPhase(dateUTCms) {
+  const syn = 29.530588853, ref = Date.UTC(2000, 0, 6, 18, 14);
+  return ((((dateUTCms - ref) / 86400000) % syn) + syn) % syn / syn;
+}
+function moonSVG(f) {
+  const r = 10, lit = (1 - Math.cos(2 * Math.PI * f)) / 2, waxing = f < 0.5;
+  const k = Math.cos(2 * Math.PI * f) * r; // demi-axe du terminateur
+  const sweepOuter = waxing ? 1 : 0;
+  const sweepInner = (f < 0.25 || (f > 0.5 && f < 0.75)) ? sweepOuter : 1 - sweepOuter;
+  const path = `M12 ${12 - r} A ${r} ${r} 0 0 ${sweepOuter} 12 ${12 + r} A ${Math.abs(k)} ${r} 0 0 ${sweepInner} 12 ${12 - r}Z`;
+  return `<svg class="moon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="${r}" fill="none" stroke="var(--p-soft)" stroke-width="1"/>${lit > 0.02 ? `<path d="${path}" fill="var(--p-ink)"/>` : ''}</svg>`;
+}
+
+function sunSign(mo, d) {
+  const starts = [[3,21],[4,20],[5,21],[6,21],[7,23],[8,23],[9,23],[10,23],[11,22],[12,22],[1,20],[2,19]];
+  for (let i = 11; i >= 0; i--) {
+    const [m0, d0] = starts[i], [m1, d1] = starts[(i + 1) % 12];
+    const after = mo > m0 || (mo === m0 && d >= d0), before = mo < m1 || (mo === m1 && d < d1);
+    if (m0 < m1 ? (after && before) : (after || before)) return i;
+  }
+  return 0;
+}
+
+// Ciel étoilé décoratif (déterministe selon la date)
+function starsSVG(seed) {
+  let x = seed % 2147483647 || 1; const rnd = () => (x = x * 16807 % 2147483647) / 2147483647;
+  let s = '';
+  for (let i = 0; i < 90; i++) { const cx = rnd() * 100, cy = rnd() * 38, r = rnd() * .22 + .05;
+    s += `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}" fill="#fff" opacity="${(rnd() * .6 + .2).toFixed(2)}"/>`; }
+  return `<svg class="stars" viewBox="0 0 100 141" preserveAspectRatio="none">${s}</svg>`;
+}
+
+// ---------- Données ----------
+async function getJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+async function fetchDay(place, iso) {
+  const u = `https://archive-api.open-meteo.com/v1/archive?latitude=${place.lat}&longitude=${place.lon}&start_date=${iso}&end_date=${iso}` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,wind_gusts_10m_max,sunrise,sunset,daylight_duration` +
+    `&hourly=temperature_2m&timezone=auto`;
+  return getJSON(u);
+}
+async function fetchHistory(place) {
+  const end = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
+  const u = `https://archive-api.open-meteo.com/v1/archive?latitude=${place.lat}&longitude=${place.lon}&start_date=1940-01-01&end_date=${end}&daily=temperature_2m_max&timezone=auto`;
+  return getJSON(u);
+}
+
+// ---------- Rendu de l'affiche ----------
+function render(o) {
+  const L = T[o.lang];
+  const P = $('poster');
+  P.className = 'poster' + (o.theme === 'paper' ? ' paper' : '');
+  const dateObj = new Date(Date.UTC(o.date.y, o.date.mo - 1, o.date.d, 12));
+  const dateTxt = dateObj.toLocaleDateString(L.locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const timeTxt = o.time ? (o.lang === 'fr' ? `${o.time.h} h ${pad(o.time.mi)}` : `${pad(o.time.h)}:${pad(o.time.mi)}`) : null;
+  const dayMonth = dateObj.toLocaleDateString(L.locale, { day: 'numeric', month: 'long', timeZone: 'UTC' });
+
+  const D = o.day.daily;
+  const tmax = D.temperature_2m_max[0], tmin = D.temperature_2m_min[0];
+  const kind = wxKind(D.weather_code[0]);
+  // Température à l'heure dite (ou à midi)
+  const hh = o.time ? o.time.h + (o.time.mi >= 30 ? 1 : 0) : 12;
+  const hIdx = Math.min(23, hh);
+  const tAt = o.day.hourly.temperature_2m[hIdx];
+  const rain = D.precipitation_sum[0] || 0, snow = D.snowfall_sum[0] || 0;
+  const gust = D.wind_gusts_10m_max[0];
+  const tOf = s => s ? s.slice(11, 16).replace(':', o.lang === 'fr' ? ' h ' : ':') : '—';
+  const dl = D.daylight_duration[0] || 0;
+  const dlTxt = `${Math.floor(dl / 3600)} h ${pad(Math.round((dl % 3600) / 60))}`;
+  const offset = o.day.utc_offset_seconds || 0;
+  const ms = Date.UTC(o.date.y, o.date.mo - 1, o.date.d, o.time ? o.time.h : 12, o.time ? o.time.mi : 0) - offset * 1000;
+  const mf = moonPhase(ms), ph = Math.floor(((mf * 8) + 0.5)) % 8;
+  const si = sunSign(o.date.mo, o.date.d);
+
+  // Classement sur le même jour depuis 1940
+  let rankHTML = '';
+  if (o.hist) {
+    const H = o.hist.daily, key = `-${pad(o.date.mo)}-${pad(o.date.d)}`;
+    const pts = [];
+    H.time.forEach((t, i) => { if (t.endsWith(key) && H.temperature_2m_max[i] != null) pts.push({ y: +t.slice(0, 4), v: H.temperature_2m_max[i] }); });
+    const me = pts.find(p => p.y === o.date.y);
+    if (me && pts.length > 10) {
+      const others = pts.filter(p => p.y !== o.date.y);
+      const below = others.filter(p => p.v < me.v).length, above = others.filter(p => p.v > me.v).length;
+      const pctW = Math.round(100 * below / others.length), pctC = Math.round(100 * above / others.length);
+      let sentence;
+      if (above === 0) sentence = L.hottest(dayMonth);
+      else if (below === 0) sentence = L.coldest(dayMonth);
+      else sentence = pctW >= 50 ? L.warmer(pctW, dayMonth) : L.colder(pctC, dayMonth);
+      const vmin = Math.min(...pts.map(p => p.v)), vmax = Math.max(...pts.map(p => p.v));
+      const y0 = pts[0].y, y1 = pts[pts.length - 1].y, n = y1 - y0 + 1, w = 100 / n;
+      const bars = pts.map(p => { const hgt = 6 + 34 * (p.v - vmin) / ((vmax - vmin) || 1), x = (p.y - y0) * w;
+        const isMe = p.y === o.date.y;
+        return `<rect x="${(x + w * .15).toFixed(2)}" y="${(40 - hgt).toFixed(2)}" width="${(w * .7).toFixed(2)}" height="${hgt.toFixed(2)}" rx="${(w * .3).toFixed(2)}" fill="${isMe ? 'var(--p-accent)' : 'var(--p-soft)'}" opacity="${isMe ? 1 : .35}"/>`; }).join('');
+      const meX = (me.y - y0) * w + w / 2;
+      rankHTML = `<div class="rank"><div class="rank-txt">${sentence}</div>
+        <div class="bars-wrap"><svg class="bars" viewBox="0 0 100 40" preserveAspectRatio="none">${bars}</svg>
+          <span class="me-year" style="left:${Math.min(95, Math.max(5, meX)).toFixed(2)}%">${me.y}</span></div>
+        <div class="bars-cap"><span>${y0}</span><span>${L.barsCap}</span><span>${y1}</span></div></div>`;
+    }
+  }
+
+  const name = esc(o.name || '');
+  const title = o.kind === 'custom' ? esc(L.title.custom(o.name, o.custom)) : L.title[o.kind](name);
+  const placeName = esc(o.place.name), placeRest = esc(o.place.country || '');
+  P.innerHTML = `
+    ${starsSVG(o.date.y * 10000 + o.date.mo * 100 + o.date.d)}
+    ${L.top[o.kind] ? `<div class="top">${L.top[o.kind]}</div>` : ''}
+    <div class="title">${title}</div>
+    <div class="when">${dateTxt}${timeTxt ? ` · ${timeTxt}` : ''}</div>
+    <div class="where">${placeName}${placeRest ? ' · ' + placeRest : ''}</div>
+    <div class="hero">
+      ${wxIcon(kind)}
+      <div class="temps">
+        <div class="wx-label">${L.wx[kind]}</div>
+        <div class="range">${fmtNum(tmin, o.lang)}°<span class="arrow">→</span>${fmtNum(tmax, o.lang)}°</div>
+        <div class="range-cap">${L.range}</div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="cell"><div class="k">${o.time ? L.k.atHour : L.k.noon}</div><div class="v">${fmtNum(tAt, o.lang)} °C</div></div>
+      <div class="cell"><div class="k">${snow >= 0.5 ? L.k.snow : L.k.rain}</div><div class="v">${snow >= 0.5 ? fmtNum(snow, o.lang, 1) + ' <small>cm</small>' : rain < 0.2 ? L.none : fmtNum(rain, o.lang, 1) + ' <small>mm</small>'}</div></div>
+      <div class="cell"><div class="k">${L.k.wind}</div><div class="v">${fmtNum(gust, o.lang)} <small>km/h</small></div></div>
+      <div class="cell"><div class="k">${L.k.sun}</div><div class="v"><small>↑</small> ${tOf(D.sunrise[0])}<br><small>↓</small> ${tOf(D.sunset[0])}</div></div>
+      <div class="cell"><div class="k">${L.k.day}</div><div class="v">${dlTxt}</div></div>
+      <div class="cell"><div class="k">${L.k.moon}</div><div class="v" style="font-size:3.3cqw">${moonSVG(mf)}${L.phases[ph]}</div></div>
+    </div>
+    ${rankHTML}
+    ${o.note ? `<div class="note">« ${esc(o.note)} »</div>`.replace('« ', o.lang === 'fr' ? '« ' : '“').replace(' »', o.lang === 'fr' ? ' »' : '”') : ''}
+    <div class="foot">
+      <div>${L.src}<br>comparateur-meteo.fr</div>
+      <div class="sign">${L.sign}<br>${SIGN_GLYPH[si]}&#xFE0E; ${L.signs[si]}</div>
+    </div>`;
+}
+
+// ---------- Formulaire ----------
+const msg = (t, err) => { $('msg').textContent = t; $('msg').className = 'msg' + (err ? ' err' : ''); };
+autoFormat($('f-date'), [2, 2, 4], '/');
+autoFormat($('f-time'), [2, 2], ':');
+$('f-notime').addEventListener('change', () => { $('f-time').disabled = $('f-notime').checked; });
+$('f-kind').addEventListener('change', () => {
+  const k = $('f-kind').value;
+  $('custom-wrap').classList.toggle('hidden', k !== 'custom');
+  $('l-name').textContent = k.startsWith('birth') ? 'Prénom' : k === 'custom' ? 'Prénom(s) (facultatif)' : 'Prénoms (ex. : Léa & Tom)';
+});
+$('f-size').addEventListener('change', () => {
+  const a3 = $('f-size').value === 'A3';
+  $('page-size').textContent = `@page { size: ${a3 ? 'A3' : 'A4'} portrait; margin: 0; }`;
+  document.documentElement.style.setProperty('--print-w', a3 ? '297mm' : '210mm');
+});
+
+let chosen = null, timer = null;
+$('f-place').addEventListener('input', () => {
+  chosen = null; clearTimeout(timer);
+  const q = $('f-place').value.trim(), box = $('suggest');
+  if (q.length < 2) { box.classList.add('hidden'); return; }
+  timer = setTimeout(async () => {
+    try {
+      const j = await getJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=${$('f-lang').value}&format=json`);
+      const res = j.results || [];
+      box.innerHTML = res.length ? res.map((x, i) => `<button type="button" data-i="${i}">${esc(x.name)} <small>${esc([x.admin1, x.country].filter(Boolean).join(', '))}</small></button>`).join('')
+        : '<button type="button" disabled><small>Aucun lieu trouvé</small></button>';
+      box.classList.remove('hidden');
+      box.onclick = e => {
+        const b = e.target.closest('button[data-i]'); if (!b) return;
+        const x = res[+b.dataset.i];
+        chosen = { name: x.name, country: x.country, lat: x.latitude, lon: x.longitude };
+        $('f-place').value = [x.name, x.admin1, x.country].filter(Boolean).join(', ');
+        box.classList.add('hidden');
+      };
+    } catch (e) { box.innerHTML = '<button type="button" disabled><small>Recherche indisponible</small></button>'; box.classList.remove('hidden'); }
+  }, 300);
+});
+document.addEventListener('click', e => { if (!e.target.closest('.field')) $('suggest').classList.add('hidden'); });
+
+let histCache = {};
+$('go').addEventListener('click', async () => {
+  const date = parseDate($('f-date').value);
+  if (!date) return msg('Date invalide : JJ/MM/AAAA.', true);
+  const iso = date.iso, limit = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
+  if (iso < '1940-01-01' || iso > limit) return msg('Date hors des archives (1940 → il y a 6 jours).', true);
+  let time = null;
+  if (!$('f-notime').checked && $('f-time').value.trim()) { time = parseTime($('f-time').value); if (!time) return msg('Heure invalide : HH:MM.', true); }
+  if (!chosen) return msg('Choisissez le lieu dans la liste proposée.', true);
+  const kind = $('f-kind').value, name = $('f-name').value.trim(), custom = $('f-custom').value.trim();
+  if (kind !== 'custom' && !name) return msg('Indiquez le prénom.', true);
+  $('go').disabled = true; msg('Récupération des archives…');
+  try {
+    const key = `${chosen.lat},${chosen.lon}`;
+    const [day, hist] = await Promise.all([
+      fetchDay(chosen, iso),
+      histCache[key] ? Promise.resolve(histCache[key]) : fetchHistory(chosen).then(h => (histCache[key] = h)).catch(() => null)
+    ]);
+    if (!day.daily || day.daily.temperature_2m_max[0] == null) throw new Error('vide');
+    render({ lang: $('f-lang').value, theme: $('f-theme').value, kind, name, custom, note: $('f-note').value.trim(), date, time, place: chosen, day, hist });
+    $('print').disabled = false;
+    msg(hist ? 'Affiche prête.' : 'Affiche prête (comparaison 1940 → aujourd\'hui indisponible).');
+  } catch (e) {
+    msg('Impossible de récupérer la météo de ce jour. Réessayez.', true);
+  } finally { $('go').disabled = false; }
+});
+$('print').addEventListener('click', () => window.print());
+['f-lang', 'f-theme'].forEach(id => $(id).addEventListener('change', () => { if (!$('print').disabled) $('go').click(); }));
+
+// Affiche d'exemple au chargement (Lyon), pour voir le rendu tout de suite
+chosen = { name: 'Lyon', country: 'France', lat: 45.7485, lon: 4.8467 };
+$('f-place').value = 'Lyon, Auvergne-Rhône-Alpes, France';
+$('go').click();
+</script>
+</body>
+</html>
