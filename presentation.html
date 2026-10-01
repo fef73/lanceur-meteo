@@ -6,9 +6,12 @@
 <title>Les 6 sites météo de fef73 — présentation</title>
 <meta name="description" content="Six outils gratuits, sans inscription : météo de la famille, comparateur de villes en altitude, historique des températures et de la neige depuis 1940, et météo astrale.">
 <link rel="canonical" href="https://comparateur-meteo.fr/presentation.html">
+<link rel="alternate" hreflang="fr" href="https://comparateur-meteo.fr/presentation.html?lang=fr">
+<link rel="alternate" hreflang="en" href="https://comparateur-meteo.fr/presentation.html?lang=en">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Comparateur météo">
 <meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_GB">
 <meta property="og:title" content="Les 6 sites météo de fef73">
 <meta property="og:description" content="Gratuits, sans compte, sur téléphone et ordinateur : famille, villes, historique depuis 1940, neige et météo astrale.">
 <meta property="og:url" content="https://comparateur-meteo.fr/presentation.html">
@@ -20,6 +23,15 @@
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  // Langue choisie avant l'affichage : ?lang=, puis préférence partagée avec le lanceur, puis langue du navigateur
+  (function(){
+    var q = new URLSearchParams(location.search).get('lang'), s = null;
+    try { s = localStorage.getItem('lanceur-meteo-lang'); } catch(e){}
+    var l = (q === 'fr' || q === 'en') ? q : (s === 'fr' || s === 'en') ? s : ((navigator.language || 'fr').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en');
+    document.documentElement.lang = l;
+  })();
+</script>
 <style>
   :root{
     --bg:#0b1622; --bg-panel:#101f30; --bg-card:#132539; --hairline:#22384f;
@@ -29,6 +41,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   html{scroll-behavior:smooth;}
+  html[lang="fr"] .en, html[lang="en"] .fr{display:none !important;}
   body{
     background:
       radial-gradient(ellipse 900px 500px at 15% -10%, rgba(69,123,157,0.18), transparent 60%),
@@ -41,20 +54,26 @@
   a{color:var(--live);}
 
   /* En-tête */
-  .hero{border-bottom:1px solid var(--hairline);padding:10px 0 34px;margin-bottom:34px;}
+  .hero{border-bottom:1px solid var(--hairline);padding:10px 0 34px;margin-bottom:34px;position:relative;}
+  .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--live);display:flex;align-items:center;gap:8px;margin-bottom:12px;}
-  .pulse{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 2.2s infinite;}
+    color:var(--live);display:flex;align-items:center;gap:8px;}
+  .pulse{flex:none;width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 2.2s infinite;}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(126,228,184,.55);}70%{box-shadow:0 0 0 9px rgba(126,228,184,0);}100%{box-shadow:0 0 0 0 rgba(126,228,184,0);}}
+  .lang-switch{display:flex;gap:4px;background:var(--bg-card);border:1px solid var(--hairline);border-radius:8px;padding:3px;flex:none;}
+  .lang-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--text-lo);
+    background:transparent;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;transition:background .15s,color .15s;}
+  .lang-btn:hover{color:var(--text-hi);}
+  html[lang="fr"] .lang-btn[data-lang="fr"], html[lang="en"] .lang-btn[data-lang="en"]{background:var(--live);color:#0b1622;}
   h1{font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:clamp(32px,5.5vw,54px);
     line-height:1.08;margin:0 0 14px;letter-spacing:-.015em;max-width:16ch;}
   .lead{font-size:clamp(16px,2.2vw,19px);color:var(--text-lo);max-width:58ch;margin:0 0 24px;}
   .lead b{color:var(--text-hi);font-weight:500;}
   .cta-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
-  .cta{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;text-decoration:none;
-    background:var(--live);color:#0b1622;border-radius:12px;padding:12px 20px;transition:transform .1s;}
+  .cta{display:inline-flex;align-items:center;gap:8px;font:600 15px 'Space Grotesk',sans-serif;text-decoration:none;cursor:pointer;
+    background:var(--live);color:#0b1622;border:1px solid var(--live);border-radius:12px;padding:12px 20px;transition:transform .1s;}
   .cta:active{transform:scale(.97);}
-  .cta-2{background:var(--bg-card);color:var(--text-hi);border:1px solid var(--hairline);font-weight:500;}
+  .cta-2{background:var(--bg-card);color:var(--text-hi);border-color:var(--hairline);font-weight:500;}
   .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
   .badge{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-lo);background:var(--bg-card);
     border:1px solid var(--hairline);border-radius:999px;padding:6px 13px;}
@@ -120,34 +139,56 @@
 <div class="wrap">
 
   <header class="hero">
-    <div class="eyebrow"><span class="pulse"></span> Les sites no code / 100 % IA Claude de fef73</div>
-    <h1>Six outils météo, une seule adresse</h1>
-    <p class="lead">La météo de la famille, des villes, de l'historique, de la neige et même du ciel astral. <b>Gratuits, sans inscription</b>, sur téléphone comme sur ordinateur, réunis sur <b>comparateur-meteo.fr</b>.</p>
-    <div class="cta-row">
-      <a class="cta" href="https://comparateur-meteo.fr/">Ouvrir le lanceur →</a>
-      <a class="cta cta-2" href="#partager">Partager</a>
+    <div class="topbar">
+      <div class="eyebrow"><span class="pulse"></span>
+        <span class="fr">Les sites no code / 100 % IA Claude de fef73</span>
+        <span class="en">No-code sites / 100% AI Claude by fef73</span>
+      </div>
+      <div class="lang-switch" id="lang-switch">
+        <button class="lang-btn" type="button" data-lang="fr">FR</button>
+        <button class="lang-btn" type="button" data-lang="en">EN</button>
+      </div>
     </div>
-    <div class="badges">
+    <h1><span class="fr">Six outils météo, une seule adresse</span><span class="en">Six weather tools, one address</span></h1>
+    <p class="lead fr">La météo de la famille, des villes, de l'historique, de la neige et même du ciel astral. <b>Gratuits, sans inscription</b>, sur téléphone comme sur ordinateur, réunis sur <b>comparateur-meteo.fr</b>.</p>
+    <p class="lead en">Weather for your family, your cities, past days, the snow and even the astral sky. <b>Free, no sign-up</b>, on phone and computer alike, all gathered on <b>comparateur-meteo.fr</b>.</p>
+    <div class="cta-row">
+      <a class="cta" href="https://comparateur-meteo.fr/"><span class="fr">Ouvrir le lanceur →</span><span class="en">Open the launcher →</span></a>
+      <a class="cta cta-2" href="#partager"><span class="fr">Partager</span><span class="en">Share</span></a>
+    </div>
+    <div class="badges fr">
       <span class="badge">Gratuit</span><span class="badge">Sans compte</span><span class="badge">Hors connexion</span>
       <span class="badge">FR / EN</span><span class="badge">Données gardées sur l'appareil</span>
+    </div>
+    <div class="badges en">
+      <span class="badge">Free</span><span class="badge">No account</span><span class="badge">Works offline</span>
+      <span class="badge">FR / EN</span><span class="badge">Data stays on your device</span>
     </div>
   </header>
 
   <section>
-    <h2>Les six sites</h2>
-    <p class="sec-lead">Chacun répond à une question simple. Le lanceur les ouvre tous d'un toucher, directement sur votre position si vous le souhaitez.</p>
+    <h2><span class="fr">Les six sites</span><span class="en">The six sites</span></h2>
+    <p class="sec-lead fr">Chacun répond à une question simple. Le lanceur les ouvre tous d'un toucher, directement sur votre position si vous le souhaitez.</p>
+    <p class="sec-lead en">Each one answers a simple question. The launcher opens them all with one tap, right on your location if you wish.</p>
     <div class="sites">
 
       <article class="site main-site" style="--accent:var(--live)">
         <div class="site-head">
           <span class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span>
-          <div><h3>Lanceur météo</h3><p class="q">« Par où je commence ? »</p></div>
+          <div><h3><span class="fr">Lanceur météo</span><span class="en">Weather launcher</span></h3>
+            <p class="q fr">« Par où je commence ? »</p><p class="q en">“Where do I start?”</p></div>
         </div>
-        <p class="pitch">Une page d'accueil qui s'installe comme une appli sur le téléphone et ouvre les cinq outils.</p>
-        <ul>
+        <p class="pitch fr">Une page d'accueil qui s'installe comme une appli sur le téléphone et ouvre les cinq outils.</p>
+        <p class="pitch en">A home page that installs like an app on your phone and opens the five tools.</p>
+        <ul class="fr">
           <li><b>📍 Ma position</b> : un toucher, et chaque outil s'ouvre sur l'endroit où vous êtes, avec le nom de votre choix (« Chalet », « Maison »…).</li>
           <li><b>🎂 Mon profil</b> facultatif : date, heure et ville de naissance, gardés sur le téléphone, pour des surprises le jour de votre anniversaire.</li>
           <li>Avatar personnel, y compris une photo du téléphone. Fonctionne même sans réseau.</li>
+        </ul>
+        <ul class="en">
+          <li><b>📍 My location</b>: one tap, and each tool opens where you are, with the name of your choice (“Chalet”, “Home”…).</li>
+          <li><b>🎂 My profile</b>, optional: date, time and town of birth, kept on the phone, for surprises on your birthday.</li>
+          <li>Personal avatar, including a photo from your phone. Works even without a network.</li>
         </ul>
         <a class="open" href="https://comparateur-meteo.fr/">comparateur-meteo.fr →</a>
       </article>
@@ -155,85 +196,126 @@
       <article class="site" style="--accent:var(--amber)">
         <div class="site-head">
           <span class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
-          <div><h3>Prévisions Météo famille</h3><p class="q">« Qui a le plus chaud, chez nous, aujourd'hui ? »</p></div>
+          <div><h3><span class="fr">Prévisions Météo famille</span><span class="en">Family weather forecast</span></h3>
+            <p class="q fr">« Qui a le plus chaud, chez nous, aujourd'hui ? »</p><p class="q en">“Who's the warmest in the family today?”</p></div>
         </div>
-        <p class="pitch">Les températures heure par heure, là où vit chaque membre de la famille, sur un même graphique avec l'avatar de chacun.</p>
-        <ul>
+        <p class="pitch fr">Les températures heure par heure, là où vit chaque membre de la famille, sur un même graphique avec l'avatar de chacun.</p>
+        <p class="pitch en">Hour-by-hour temperatures where each family member lives, on a single chart with everyone's avatar.</p>
+        <ul class="fr">
           <li>Aujourd'hui, demain, après-demain, 3 ou 7 jours, avec seuils canicule et gel.</li>
           <li>Humidité, vent, soleil, qualité de l'air et pollens pour chacun.</li>
           <li>Records familiaux sur 365 jours, extrêmes du monde, d'Europe et de France.</li>
           <li>Votre courbe « Moi » par GPS, et pour votre anniversaire : météo du jour J, carte du ciel de votre naissance et confettis.</li>
         </ul>
-        <a class="open" href="https://fef73.github.io/meteo-famille/">Ouvrir →</a>
+        <ul class="en">
+          <li>Today, tomorrow, the day after, 3 or 7 days, with heatwave and frost thresholds.</li>
+          <li>Humidity, wind, sun, air quality and pollen for each person.</li>
+          <li>Family records over 365 days, extremes for the world, Europe and France.</li>
+          <li>Your own “Me” curve by GPS, and for your birthday: the forecast for the day, the sky map of your birth and confetti.</li>
+        </ul>
+        <a class="open" href="https://fef73.github.io/meteo-famille/"><span class="fr">Ouvrir →</span><span class="en">Open →</span></a>
       </article>
 
       <article class="site" style="--accent:var(--azure)">
         <div class="site-head">
           <span class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-3-7-6.5-7-10.5A7 7 0 0 1 12 3a7 7 0 0 1 7 7.5c0 4-3 7.5-7 10.5z"/><circle cx="12" cy="10.5" r="2.5"/></svg></span>
-          <div><h3>Prévisions Météo villes</h3><p class="q">« Plus chaud à Lyon ou en station cette semaine ? »</p></div>
+          <div><h3><span class="fr">Prévisions Météo villes</span><span class="en">City weather forecast</span></h3>
+            <p class="q fr">« Plus chaud à Lyon ou en station cette semaine ? »</p><p class="q en">“Warmer in Lyon or at the ski resort this week?”</p></div>
         </div>
-        <p class="pitch">Le même principe que la météo famille, pour n'importe quelles villes du monde.</p>
-        <ul>
+        <p class="pitch fr">Le même principe que la météo famille, pour n'importe quelles villes du monde.</p>
+        <p class="pitch en">The same idea as the family forecast, for any cities in the world.</p>
+        <ul class="fr">
           <li>Autant de villes que vous voulez, chacune à l'<b>altitude précise</b> de votre choix : la vallée face à la station de ski.</li>
           <li>Courbes côte à côte sur 1 à 7 jours, alertes canicule et gel.</li>
           <li>Qualité de l'air, pollens et extrêmes sur un an pour chaque ville.</li>
           <li>Un lien à partager qui garde votre sélection.</li>
         </ul>
-        <a class="open" href="https://fef73.github.io/comparateur-temperatures/">Ouvrir →</a>
+        <ul class="en">
+          <li>As many cities as you like, each at the <b>exact altitude</b> you choose: the valley versus the ski resort.</li>
+          <li>Side-by-side curves over 1 to 7 days, heatwave and frost alerts.</li>
+          <li>Air quality, pollen and one-year extremes for each city.</li>
+          <li>A shareable link that keeps your selection.</li>
+        </ul>
+        <a class="open" href="https://fef73.github.io/comparateur-temperatures/"><span class="fr">Ouvrir →</span><span class="en">Open →</span></a>
       </article>
 
       <article class="site" style="--accent:var(--coral)">
         <div class="site-head">
           <span class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
-          <div><h3>Historique Météo ville</h3><p class="q">« Quel temps faisait-il le jour de mon mariage ? »</p></div>
+          <div><h3><span class="fr">Historique Météo ville</span><span class="en">City weather history</span></h3>
+            <p class="q fr">« Quel temps faisait-il le jour de mon mariage ? »</p><p class="q en">“What was the weather on my wedding day?”</p></div>
         </div>
-        <p class="pitch">Les températures réellement mesurées dans n'importe quelle ville, jour après jour, <b>depuis 1940</b>.</p>
-        <ul>
+        <p class="pitch fr">Les températures réellement mesurées dans n'importe quelle ville, jour après jour, <b>depuis 1940</b>.</p>
+        <p class="pitch en">Temperatures actually recorded in any city, day after day, <b>since 1940</b>.</p>
+        <ul class="fr">
           <li>7 jours, 30 jours, 3 mois, 1 an ou les dates de votre choix.</li>
           <li>Jours de canicule, de gel, de pluie, de neige et de vent fort.</li>
           <li>Pression atmosphérique et qualité de l'air sur le même graphique.</li>
           <li>Jours déjà consultés gardés sur le téléphone : affichage instantané, même hors connexion.</li>
         </ul>
-        <a class="open" href="https://fef73.github.io/evolution-temperatures/">Ouvrir →</a>
+        <ul class="en">
+          <li>7 days, 30 days, 3 months, 1 year or the dates you choose.</li>
+          <li>Days of heatwave, frost, rain, snow and strong wind.</li>
+          <li>Air pressure and air quality on the same chart.</li>
+          <li>Days already viewed are kept on the phone: instant display, even offline.</li>
+        </ul>
+        <a class="open" href="https://fef73.github.io/evolution-temperatures/"><span class="fr">Ouvrir →</span><span class="en">Open →</span></a>
       </article>
 
       <article class="site" style="--accent:var(--teal)">
         <div class="site-head">
           <span class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M12 2l-2.5 2.5M12 2l2.5 2.5M12 22l-2.5-2.5M12 22l2.5-2.5M3.3 6.5l17.4 11M3.3 6.5l3.4-.4M3.3 6.5l1 3.3M20.7 17.5l-3.4.4M20.7 17.5l-1-3.3M3.3 17.5l17.4-11M3.3 17.5l1-3.3M3.3 17.5l3.4.4M20.7 6.5l-3.4-.4M20.7 6.5l-1 3.3"/></svg></span>
-          <div><h3>Historique Météo neige</h3><p class="q">« Combien de neige est tombée, et combien en reste-t-il ? »</p></div>
+          <div><h3><span class="fr">Historique Météo neige</span><span class="en">Snow weather history</span></h3>
+            <p class="q fr">« Combien de neige est tombée, et combien en reste-t-il ? »</p><p class="q en">“How much snow fell, and how much is left?”</p></div>
         </div>
-        <p class="pitch">Les chutes de neige jour par jour, et surtout <b>ce qu'il en reste au sol</b> après la fonte, pour une ville ou une station.</p>
-        <ul>
+        <p class="pitch fr">Les chutes de neige jour par jour, et surtout <b>ce qu'il en reste au sol</b> après la fonte, pour une ville ou une station.</p>
+        <p class="pitch en">Daily snowfall, and above all <b>what is left on the ground</b> after melting, for a town or a ski resort.</p>
+        <ul class="fr">
           <li>Altitude précise pour viser la station ou le sommet, pas la vallée.</li>
           <li>Isotherme 0 °C comparée à l'altitude du lieu : neige ou pluie ?</li>
           <li>Cumul, plus forte chute, jours de gel, pluie qui a pu lessiver le manteau.</li>
           <li>Archives depuis 1940.</li>
         </ul>
-        <a class="open" href="https://fef73.github.io/meteo-neige/">Ouvrir →</a>
+        <ul class="en">
+          <li>Exact altitude to target the resort or the summit, not the valley.</li>
+          <li>Freezing level compared with the place's altitude: snow or rain?</li>
+          <li>Total snowfall, biggest snowfall, frost days, rain that may have washed the snowpack away.</li>
+          <li>Archives since 1940.</li>
+        </ul>
+        <a class="open" href="https://fef73.github.io/meteo-neige/"><span class="fr">Ouvrir →</span><span class="en">Open →</span></a>
       </article>
 
       <article class="site" style="--accent:var(--gold)">
         <div class="site-head">
           <span class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/><path d="M17 3l.7 1.8L19.5 5.5l-1.8.7L17 8l-.7-1.8-1.8-.7 1.8-.7z"/></svg></span>
-          <div><h3>Météo astrale famille <span class="new">nouveau</span></h3><p class="q">« Qui a le ciel le plus clément aujourd'hui ? »</p></div>
+          <div><h3><span class="fr">Météo astrale famille</span><span class="en">Family astro weather</span> <span class="new"><span class="fr">nouveau</span><span class="en">new</span></span></h3>
+            <p class="q fr">« Qui a le ciel le plus clément aujourd'hui ? »</p><p class="q en">“Whose sky is kindest today?”</p></div>
         </div>
-        <p class="pitch">L'horoscope du jour de chaque proche, calculé à partir de sa date, de son heure et de son lieu de naissance.</p>
-        <ul>
+        <p class="pitch fr">L'horoscope du jour de chaque proche, calculé à partir de sa date, de son heure et de son lieu de naissance.</p>
+        <p class="pitch en">Each loved one's daily horoscope, computed from their date, time and place of birth.</p>
+        <ul class="fr">
           <li>Note sur 100 et étoiles pour l'amour, le travail et l'énergie, avec un <b>palmarès</b> de la famille.</li>
           <li><b>Thème natal</b> complet : roue du ciel, planètes, ascendant, maisons et interprétation.</li>
           <li>Info-bulles au survol et explications simples sur planètes, signes et maisons.</li>
           <li>Planètes calculées dans le téléphone, au vingtième de degré près. Pour le plaisir : l'astrologie n'a pas de valeur prédictive démontrée.</li>
         </ul>
-        <a class="open" href="https://fef73.github.io/meteo-astro/">Ouvrir →</a>
+        <ul class="en">
+          <li>Score out of 100 and stars for love, work and energy, with a family <b>leaderboard</b>.</li>
+          <li>Full <b>birth chart</b>: sky wheel, planets, ascendant, houses and interpretation.</li>
+          <li>Hover tooltips and plain explanations of planets, signs and houses.</li>
+          <li>Planets computed on the phone, within a twentieth of a degree. Just for fun: astrology has no demonstrated predictive value.</li>
+        </ul>
+        <a class="open" href="https://fef73.github.io/meteo-astro/"><span class="fr">Ouvrir →</span><span class="en">Open →</span></a>
       </article>
 
     </div>
   </section>
 
   <section>
-    <h2>Ce qu'ils ont tous en commun</h2>
-    <p class="sec-lead">Des outils simples, gratuits et respectueux de vos données.</p>
-    <div class="common">
+    <h2><span class="fr">Ce qu'ils ont tous en commun</span><span class="en">What they all have in common</span></h2>
+    <p class="sec-lead fr">Des outils simples, gratuits et respectueux de vos données.</p>
+    <p class="sec-lead en">Simple, free tools that respect your data.</p>
+    <div class="common fr">
       <div class="pt"><div class="ico">🆓</div><b>Gratuits, sans inscription</b><span>On ouvre le lien, c'est tout.</span></div>
       <div class="pt"><div class="ico">🔒</div><b>Vos données restent chez vous</b><span>Position, profil, avatar et thèmes astraux sont gardés sur votre appareil, jamais envoyés à un serveur.</span></div>
       <div class="pt"><div class="ico">📱</div><b>Faits pour le téléphone</b><span>Le lanceur s'ajoute à l'écran d'accueil comme une appli.</span></div>
@@ -241,46 +323,71 @@
       <div class="pt"><div class="ico">🌍</div><b>Français / anglais</b><span>Et °C ou °F pour les outils météo, préférences mémorisées.</span></div>
       <div class="pt"><div class="ico">🛰️</div><b>Données sérieuses</b><span>Prévisions et archives <a href="https://open-meteo.com/">Open-Meteo</a> (réanalyse ERA5), population INSEE pour la France.</span></div>
     </div>
+    <div class="common en">
+      <div class="pt"><div class="ico">🆓</div><b>Free, no sign-up</b><span>Open the link, that's it.</span></div>
+      <div class="pt"><div class="ico">🔒</div><b>Your data stays with you</b><span>Location, profile, avatar and birth charts are kept on your device, never sent to a server.</span></div>
+      <div class="pt"><div class="ico">📱</div><b>Made for phones</b><span>The launcher can be added to your home screen like an app.</span></div>
+      <div class="pt"><div class="ico">📴</div><b>Works offline</b><span>After a first visit, the launcher and the four weather tools open without a network, with the latest data received.</span></div>
+      <div class="pt"><div class="ico">🌍</div><b>French / English</b><span>And °C or °F for the weather tools, preferences remembered.</span></div>
+      <div class="pt"><div class="ico">🛰️</div><b>Reliable data</b><span>Forecasts and archives from <a href="https://open-meteo.com/">Open-Meteo</a> (ERA5 reanalysis), INSEE population data for France.</span></div>
+    </div>
   </section>
 
   <section id="partager">
-    <h2>Textes prêts à partager</h2>
-    <p class="sec-lead">Trois versions à copier telles quelles, de la plus courte à la plus complète.</p>
+    <h2><span class="fr">Textes prêts à partager</span><span class="en">Ready-to-share texts</span></h2>
+    <p class="sec-lead fr">Trois versions à copier telles quelles, de la plus courte à la plus complète.</p>
+    <p class="sec-lead en">Three versions to copy as they are, from the shortest to the most complete.</p>
     <div class="shares">
       <div class="share">
-        <div class="share-head"><b>SMS ou WhatsApp</b><button class="copy" type="button">Copier</button></div>
-<pre>☀️ J'ai créé des petits sites météo gratuits : qui a le plus chaud dans la famille, comparateur de villes, historique depuis 1940, neige en montagne… et même ton horoscope ! Tout est là 👉 https://comparateur-meteo.fr</pre>
+        <div class="share-head"><b><span class="fr">SMS ou WhatsApp</span><span class="en">Text or WhatsApp</span></b><button class="copy" type="button"></button></div>
+<pre class="fr">☀️ J'ai créé des petits sites météo gratuits : qui a le plus chaud dans la famille, comparateur de villes, historique depuis 1940, neige en montagne… et même ton horoscope ! Tout est là 👉 https://comparateur-meteo.fr</pre>
+<pre class="en">☀️ I've made some free little weather sites: who's warmest in the family, a city comparator, history since 1940, mountain snow… and even your horoscope! It's all here 👉 https://comparateur-meteo.fr</pre>
       </div>
       <div class="share">
-        <div class="share-head"><b>Facebook ou Instagram</b><button class="copy" type="button">Copier</button></div>
-<pre>🌦️ Six outils météo gratuits, sans compte et sans rien installer :
+        <div class="share-head"><b><span class="fr">Facebook ou Instagram</span><span class="en">Facebook or Instagram</span></b><button class="copy" type="button"></button></div>
+<pre class="fr">🌦️ Six outils météo gratuits, sans compte et sans rien installer :
 ☀️ Qui a le plus chaud dans la famille aujourd'hui ?
 📍 Comparez vos villes, même à l'altitude de votre station de ski
 🕰️ Le temps qu'il faisait n'importe quel jour depuis 1940
 ❄️ Combien de neige est tombée, et combien il en reste
 ✨ L'horoscope du jour de chacun, calculé sur son vrai thème natal
 Vos données restent sur votre téléphone. À essayer ici 👉 https://comparateur-meteo.fr</pre>
+<pre class="en">🌦️ Six free weather tools, no account, nothing to install:
+☀️ Who's the warmest in the family today?
+📍 Compare your cities, even at your ski resort's altitude
+🕰️ The weather on any day since 1940
+❄️ How much snow fell, and how much is left
+✨ Everyone's daily horoscope, based on their real birth chart
+Your data stays on your phone. Try it here 👉 https://comparateur-meteo.fr</pre>
       </div>
       <div class="share">
-        <div class="share-head"><b>LinkedIn ou message plus long</b><button class="copy" type="button">Copier</button></div>
-<pre>J'ai conçu six sites météo entièrement avec l'IA Claude, sans écrire une ligne de code moi-même.
+        <div class="share-head"><b><span class="fr">LinkedIn ou message plus long</span><span class="en">LinkedIn or longer message</span></b><button class="copy" type="button"></button></div>
+<pre class="fr">J'ai conçu six sites météo entièrement avec l'IA Claude, sans écrire une ligne de code moi-même.
 
 Ils sont réunis sur un lanceur qui s'installe comme une appli : prévisions heure par heure pour la famille, comparateur de villes à altitude précise, historique des températures et de la neige depuis 1940, et une météo astrale qui calcule les positions des planètes directement dans le téléphone.
 
 Tout est gratuit, sans compte, bilingue, utilisable hors connexion, et aucune donnée personnelle ne quitte l'appareil. Les données météo viennent d'Open-Meteo.
 
 Vos retours m'intéressent : https://comparateur-meteo.fr</pre>
+<pre class="en">I designed six weather sites entirely with Claude AI, without writing a single line of code myself.
+
+They're gathered on a launcher that installs like an app: hour-by-hour forecasts for the family, a city comparator at exact altitude, temperature and snow history since 1940, and an astro weather page that computes planet positions right on the phone.
+
+Everything is free, no account, bilingual, usable offline, and no personal data leaves the device. Weather data comes from Open-Meteo.
+
+I'd love your feedback: https://comparateur-meteo.fr</pre>
       </div>
     </div>
   </section>
 
   <section class="closing">
-    <h2>Essayez maintenant</h2>
+    <h2><span class="fr">Essayez maintenant</span><span class="en">Try it now</span></h2>
     <p class="big">comparateur-meteo.fr</p>
-    <p>Conçus par Fernand (fef73), sans écrire de code lui-même, avec l'IA Claude.</p>
+    <p class="fr">Conçus par Fernand (fef73), sans écrire de code lui-même, avec l'IA Claude.</p>
+    <p class="en">Designed by Fernand (fef73), without writing code himself, with Claude AI.</p>
     <div class="cta-row" style="justify-content:center">
-      <a class="cta" href="https://comparateur-meteo.fr/">Ouvrir le lanceur →</a>
-      <button class="cta cta-2" type="button" id="share-page">📤 Partager cette page</button>
+      <a class="cta" href="https://comparateur-meteo.fr/"><span class="fr">Ouvrir le lanceur →</span><span class="en">Open the launcher →</span></a>
+      <button class="cta cta-2" type="button" id="share-page"><span class="fr">📤 Partager cette page</span><span class="en">📤 Share this page</span></button>
     </div>
   </section>
 
@@ -291,9 +398,30 @@ Vos retours m'intéressent : https://comparateur-meteo.fr</pre>
 </div>
 
 <script>
+const TXT = {
+  fr: { title: 'Les 6 sites météo de fef73 — présentation', copy: 'Copier', copied: 'Copié ✓', shareText: 'Six outils météo gratuits, une seule adresse', linkCopied: 'Lien copié ✓' },
+  en: { title: "fef73's 6 weather sites — overview", copy: 'Copy', copied: 'Copied ✓', shareText: 'Six free weather tools, one address', linkCopied: 'Link copied ✓' }
+};
+const lang = () => document.documentElement.lang === 'en' ? 'en' : 'fr';
+
+function applyLang() {
+  const t = TXT[lang()];
+  document.title = t.title;
+  document.querySelectorAll('.copy').forEach(b => { if (!b.classList.contains('done')) b.textContent = t.copy; });
+}
+
+document.getElementById('lang-switch').addEventListener('click', e => {
+  const b = e.target.closest('.lang-btn'); if (!b) return;
+  document.documentElement.lang = b.dataset.lang;
+  try { localStorage.setItem('lanceur-meteo-lang', b.dataset.lang); } catch (err) {}
+  const url = new URL(location.href); url.searchParams.set('lang', b.dataset.lang);
+  history.replaceState(null, '', url);
+  applyLang();
+});
+
 document.querySelectorAll('.copy').forEach(btn => {
   btn.addEventListener('click', async () => {
-    const text = btn.closest('.share').querySelector('pre').textContent;
+    const text = btn.closest('.share').querySelector('pre.' + lang()).textContent;
     try {
       await navigator.clipboard.writeText(text);
     } catch (e) {
@@ -302,17 +430,21 @@ document.querySelectorAll('.copy').forEach(btn => {
       try { document.execCommand('copy'); } catch (err) {}
       ta.remove();
     }
-    btn.textContent = 'Copié ✓'; btn.classList.add('done');
-    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('done'); }, 1800);
+    btn.textContent = TXT[lang()].copied; btn.classList.add('done');
+    setTimeout(() => { btn.classList.remove('done'); btn.textContent = TXT[lang()].copy; }, 1800);
   });
 });
+
 document.getElementById('share-page').addEventListener('click', async () => {
-  const data = { title: document.title, text: 'Six outils météo gratuits, une seule adresse', url: location.href };
+  const t = TXT[lang()];
+  const url = new URL(location.href); url.searchParams.set('lang', lang());
   try {
-    if (navigator.share) await navigator.share(data);
-    else { await navigator.clipboard.writeText(location.href); document.getElementById('share-page').textContent = 'Lien copié ✓'; }
+    if (navigator.share) await navigator.share({ title: t.title, text: t.shareText, url: url.toString() });
+    else { await navigator.clipboard.writeText(url.toString()); document.getElementById('share-page').textContent = t.linkCopied; }
   } catch (e) {}
 });
+
+applyLang();
 </script>
 </body>
 </html>
