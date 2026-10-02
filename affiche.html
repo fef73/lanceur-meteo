@@ -85,6 +85,10 @@
   .sw.on small{color:var(--text-hi);}
   .poster .top{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.35em;text-transform:uppercase;color:var(--p-soft);text-align:center;position:relative;}
   .poster .title{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:10.5cqw;line-height:1.02;text-align:center;margin:2.2cqw 0 2.6cqw;position:relative;letter-spacing:-.01em;}
+  .poster .agebadge{text-align:center;margin:0 0 2.6cqw;position:relative;}
+  .poster .agebadge span{display:inline-block;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:4.6cqw;color:var(--p-accent);
+    border-top:1px solid var(--p-accent);border-bottom:1px solid var(--p-accent);padding:.6cqw 3cqw;}
+  .poster .agebadge small{display:block;font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:1.8cqw;letter-spacing:.12em;text-transform:uppercase;color:var(--p-soft);margin-top:1cqw;}
   .poster .subline{font-family:'Fraunces',serif;font-style:italic;font-size:3.4cqw;text-align:center;color:var(--p-soft);margin:-1cqw 0 2.4cqw;position:relative;}
   .poster .when{font-family:'Fraunces',serif;font-size:3.6cqw;text-align:center;color:var(--p-ink);position:relative;}
   .poster .where{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--p-soft);margin-top:1.2cqw;position:relative;}
@@ -150,6 +154,9 @@
       </div>
       <div class="field"><label for="f-place">Lieu</label><input data-lpignore="true" data-1p-ignore data-form-type="other" id="f-place" type="text" autocomplete="off" placeholder="Ville…" value="">
         <div class="suggest hidden" id="suggest"></div></div>
+      <div class="field"><label class="check" style="font-size:13px;color:var(--text-hi)"><input type="checkbox" id="f-age"> Afficher l'âge (ou les années de mariage)</label></div>
+      <div class="field hidden" id="age-wrap"><label for="f-agedate">Âge au</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-agedate" type="text" inputmode="numeric" maxlength="10" placeholder="JJ/MM/AAAA">
+        <label class="check" style="text-transform:none">Par défaut : le prochain anniversaire de la date</label></div>
       <div class="field"><label for="f-note">Message (facultatif)</label><textarea data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-note" maxlength="140" placeholder="Bienvenue parmi nous !"></textarea></div>
       <div class="row2">
         <div class="field"><label for="f-lang">Langue</label><select id="f-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
@@ -177,6 +184,9 @@ const T = {
   fr: {
     locale: 'fr-FR',
     top: { birthF: 'Le jour où', birthM: 'Le jour où', anniv: 'Joyeux anniversaire', wedding: 'Le jour où', weddingAnniv: 'Joyeux anniversaire de mariage', meet: 'Le jour où', custom: '' },
+    age: (n, k) => (k === 'wedding' || k === 'weddingAnniv') ? `${n} an${n > 1 ? 's' : ''} de mariage` : k === 'meet' ? `${n} an${n > 1 ? 's' : ''} ensemble` : `${n} an${n > 1 ? 's' : ''}`,
+    ageOn: d => `le ${d}`,
+    noces: { 1: 'noces de coton', 5: 'noces de bois', 10: "noces d'étain", 15: 'noces de cristal', 20: 'noces de porcelaine', 25: "noces d'argent", 30: 'noces de perle', 35: 'noces de rubis', 40: "noces d'émeraude", 45: 'noces de vermeil', 50: "noces d'or", 60: 'noces de diamant', 70: 'noces de platine' },
     sub: { anniv: "Le temps qu'il faisait le jour de ta naissance", weddingAnniv: "Le temps qu'il faisait le jour de votre mariage" },
     title: { birthF: n => `${n} est née`, birthM: n => `${n} est né`, anniv: n => n, weddingAnniv: n => n, wedding: n => `${n} se sont dit oui`, meet: n => `${n} se sont rencontrés`, custom: (n, c) => c || n },
     at: 'à', range: 'Minimum → maximum de la journée',
@@ -195,6 +205,9 @@ const T = {
   en: {
     locale: 'en-GB',
     top: { birthF: 'The day', birthM: 'The day', anniv: 'Happy birthday', wedding: 'The day', weddingAnniv: 'Happy anniversary', meet: 'The day', custom: '' },
+    age: (n, k) => (k === 'wedding' || k === 'weddingAnniv') ? `${n} year${n > 1 ? 's' : ''} of marriage` : k === 'meet' ? `${n} year${n > 1 ? 's' : ''} together` : `${n} year${n > 1 ? 's' : ''} old`,
+    ageOn: d => `on ${d}`,
+    noces: { 1: 'paper anniversary', 5: 'wood anniversary', 10: 'tin anniversary', 15: 'crystal anniversary', 20: 'china anniversary', 25: 'silver anniversary', 30: 'pearl anniversary', 35: 'coral anniversary', 40: 'ruby anniversary', 45: 'sapphire anniversary', 50: 'golden anniversary', 60: 'diamond anniversary', 70: 'platinum anniversary' },
     sub: { anniv: 'The weather on the day you were born', weddingAnniv: 'The weather on your wedding day' },
     title: { birthF: n => `${n} was born`, birthM: n => `${n} was born`, anniv: n => n, weddingAnniv: n => n, wedding: n => `${n} said yes`, meet: n => `${n} met`, custom: (n, c) => c || n },
     at: 'at', range: "The day's low → high",
@@ -388,6 +401,28 @@ async function fetchHistory(place) {
   return getJSON(u);
 }
 
+// ---------- Âge ----------
+function nextAnniversary(date) {
+  const now = new Date(), y = now.getFullYear();
+  let t = new Date(y, date.mo - 1, date.d);
+  if (t < new Date(y, now.getMonth(), now.getDate())) t = new Date(y + 1, date.mo - 1, date.d);
+  return { y: t.getFullYear(), mo: t.getMonth() + 1, d: t.getDate() };
+}
+function yearsBetween(a, b) {
+  let n = b.y - a.y;
+  if (b.mo < a.mo || (b.mo === a.mo && b.d < a.d)) n--;
+  return n;
+}
+function ageHTML(o, L) {
+  if (!o.age) return '';
+  const n = yearsBetween(o.date, o.age);
+  if (n < 1) return '';
+  const onTxt = new Date(Date.UTC(o.age.y, o.age.mo - 1, o.age.d, 12)).toLocaleDateString(L.locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const wed = o.kind === 'wedding' || o.kind === 'weddingAnniv';
+  const extra = wed && L.noces[n] ? ` · ${L.noces[n]}` : '';
+  return `<div class="agebadge"><span>${L.age(n, o.kind)}${extra}</span><small>${L.ageOn(onTxt)}</small></div>`;
+}
+
 // ---------- Rendu de l'affiche ----------
 function render(o) {
   const L = T[o.lang];
@@ -452,6 +487,7 @@ function render(o) {
     ${L.top[o.kind] ? `<div class="top">${L.top[o.kind]}</div>` : ''}
     <div class="title">${title}</div>
     ${L.sub && L.sub[o.kind] ? `<div class="subline">${L.sub[o.kind]}</div>` : ''}
+    ${ageHTML(o, L)}
     <div class="when">${dateTxt}${timeTxt ? ` · ${timeTxt}` : ''}</div>
     <div class="where">${placeName}${placeRest ? ' · ' + placeRest : ''}</div>
     <div class="hero">
@@ -482,6 +518,12 @@ function render(o) {
 const msg = (t, err) => { $('msg').textContent = t; $('msg').className = 'msg' + (err ? ' err' : ''); };
 autoFormat($('f-date'), [2, 2, 4], '/');
 autoFormat($('f-time'), [2, 2], ':');
+autoFormat($('f-agedate'), [2, 2, 4], '/');
+$('f-age').addEventListener('change', () => {
+  $('age-wrap').classList.toggle('hidden', !$('f-age').checked);
+  if (!$('print').disabled) $('go').click();
+});
+$('f-date').addEventListener('change', () => { $('f-agedate').value = ''; });
 $('f-notime').addEventListener('change', () => { $('f-time').disabled = $('f-notime').checked; });
 $('f-kind').addEventListener('change', () => {
   const k = $('f-kind').value;
@@ -528,6 +570,13 @@ $('go').addEventListener('click', async () => {
   if (!$('f-notime').checked && $('f-time').value.trim()) { time = parseTime($('f-time').value); if (!time) return msg('Heure invalide : HH:MM.', true); }
   if (!chosen) return msg('Choisissez le lieu dans la liste proposée.', true);
   const kind = $('f-kind').value, name = $('f-name').value.trim(), custom = $('f-custom').value.trim();
+  let age = null;
+  if ($('f-age').checked) {
+    if (!$('f-agedate').value.trim()) { const na = nextAnniversary(date); $('f-agedate').value = `${pad(na.d)}/${pad(na.mo)}/${na.y}`; }
+    age = parseDate($('f-agedate').value);
+    if (!age) return msg("Date de l'âge invalide : JJ/MM/AAAA.", true);
+    if (yearsBetween(date, age) < 1) return msg("La date de l'âge doit être au moins un an après la date de l'affiche.", true);
+  }
   if (kind !== 'custom' && !name) return msg('Indiquez le prénom.', true);
   $('go').disabled = true; msg('Récupération des archives…');
   try {
@@ -537,7 +586,7 @@ $('go').addEventListener('click', async () => {
       histCache[key] ? Promise.resolve(histCache[key]) : fetchHistory(chosen).then(h => (histCache[key] = h)).catch(() => null)
     ]);
     if (!day.daily || day.daily.temperature_2m_max[0] == null) throw new Error('vide');
-    render({ lang: $('f-lang').value, theme: currentTheme, kind, name, custom, note: $('f-note').value.trim(), date, time, place: chosen, day, hist });
+    render({ lang: $('f-lang').value, theme: currentTheme, kind, name, custom, age, note: $('f-note').value.trim(), date, time, place: chosen, day, hist });
     $('print').disabled = false;
     msg(hist ? 'Affiche prête.' : 'Affiche prête (comparaison 1940 → aujourd\'hui indisponible).');
   } catch (e) {
