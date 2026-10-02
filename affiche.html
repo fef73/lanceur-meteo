@@ -33,6 +33,7 @@
   .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--live);}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-lo);margin-top:5px;font-family:'IBM Plex Mono',monospace;}
+  .field label.check{display:flex;text-transform:none;letter-spacing:0;font-size:12px;margin:6px 0 0;}
   .suggest{position:absolute;left:0;right:0;top:100%;z-index:20;background:var(--bg-card);border:1px solid var(--hairline);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);}
   .suggest button{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--hairline);color:var(--text-hi);padding:9px 12px;cursor:pointer;font:13px 'Space Grotesk',sans-serif;}
   .suggest button:last-child{border-bottom:none;}
@@ -59,14 +60,32 @@
     padding:8cqw 8cqw 6cqw;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
-  .poster.paper{
-    --p-bg:#f6f1e7; --p-ink:#1b2a3a; --p-soft:#5f6f80; --p-line:rgba(27,42,58,.16); --p-accent:#c8642a; --p-accent2:#2a7f72;
-    background:var(--p-bg);
-  }
-  .poster .stars{position:absolute;inset:0;pointer-events:none;opacity:.55;}
-  .poster.paper .stars{display:none;}
+  /* Fonds */
+  .poster.t-paper{--p-bg:#f6f1e7; --p-ink:#1b2a3a; --p-soft:#5f6f80; --p-line:rgba(27,42,58,.16); --p-accent:#c8642a; --p-accent2:#2a7f72;
+    background:var(--p-bg);}
+  .poster.t-rose{--p-bg:#fbeef2; --p-ink:#4a2638; --p-soft:#9a6c80; --p-line:rgba(74,38,56,.15); --p-accent:#d4688b; --p-accent2:#6fa8c0;
+    background:linear-gradient(180deg,#fde7ee 0%,#fbf1f4 55%,#f7e2ea 100%);}
+  .poster.t-sky{--p-bg:#eef6fc; --p-ink:#1d3854; --p-soft:#6886a4; --p-line:rgba(29,56,84,.15); --p-accent:#e09a2e; --p-accent2:#4a8cc6;
+    background:linear-gradient(180deg,#d9ecfa 0%,#f1f8fd 55%,#dfeefa 100%);}
+  .poster.t-wedding{--p-bg:#fbf7ef; --p-ink:#3a3124; --p-soft:#8b7c63; --p-line:rgba(176,141,74,.35); --p-accent:#b08d4a; --p-accent2:#7a9a7c;
+    background:radial-gradient(90% 60% at 50% 30%,#fffdf8 0%,#f8f1e3 100%);}
+  .poster.t-party{--p-bg:#191238; --p-ink:#fff6ea; --p-soft:#b9aedb; --p-line:rgba(255,246,234,.16); --p-accent:#ffd166; --p-accent2:#ff7aa2;
+    background:radial-gradient(120% 70% at 50% 0%,#33246b 0%,#191238 65%);}
+  .poster.t-dusk{--p-bg:#2a1c45; --p-ink:#fff4ee; --p-soft:#e2bfd0; --p-line:rgba(255,244,238,.18); --p-accent:#ffab85; --p-accent2:#ffd1dc;
+    background:linear-gradient(180deg,#221838 0%,#3d2453 55%,#5c2f5c 100%);}
+  .poster.t-alpine{--p-bg:#0f2233; --p-ink:#eef4f8; --p-soft:#9db4c7; --p-line:rgba(238,244,248,.16); --p-accent:#f4a261; --p-accent2:#9fd3f2;
+    background:linear-gradient(180deg,#0b1a29 0%,#16324a 70%,#1f4462 100%);}
+  .poster .deco{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  /* Sélecteur de fond */
+  .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .sw{border:2px solid var(--hairline);border-radius:9px;padding:0;cursor:pointer;background:none;overflow:hidden;text-align:center;}
+  .sw span{display:block;height:34px;}
+  .sw small{display:block;font:10.5px 'IBM Plex Mono',monospace;color:var(--text-lo);padding:3px 0 4px;background:var(--bg-card);}
+  .sw.on{border-color:var(--live);}
+  .sw.on small{color:var(--text-hi);}
   .poster .top{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.35em;text-transform:uppercase;color:var(--p-soft);text-align:center;position:relative;}
   .poster .title{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:10.5cqw;line-height:1.02;text-align:center;margin:2.2cqw 0 2.6cqw;position:relative;letter-spacing:-.01em;}
+  .poster .subline{font-family:'Fraunces',serif;font-style:italic;font-size:3.4cqw;text-align:center;color:var(--p-soft);margin:-1cqw 0 2.4cqw;position:relative;}
   .poster .when{font-family:'Fraunces',serif;font-size:3.6cqw;text-align:center;color:var(--p-ink);position:relative;}
   .poster .where{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--p-soft);margin-top:1.2cqw;position:relative;}
   .poster .hero{display:flex;align-items:center;justify-content:center;gap:5cqw;margin:9cqw 0 7cqw;position:relative;}
@@ -116,7 +135,9 @@
         <select id="f-kind">
           <option value="birthF">Naissance (fille)</option>
           <option value="birthM">Naissance (garçon)</option>
+          <option value="anniv">Anniversaire</option>
           <option value="wedding">Mariage</option>
+          <option value="weddingAnniv">Anniversaire de mariage</option>
           <option value="meet">Rencontre</option>
           <option value="custom">Titre libre</option>
         </select></div>
@@ -132,9 +153,9 @@
       <div class="field"><label for="f-note">Message (facultatif)</label><textarea id="f-note" maxlength="140" placeholder="Bienvenue parmi nous !"></textarea></div>
       <div class="row2">
         <div class="field"><label for="f-lang">Langue</label><select id="f-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
-        <div class="field"><label for="f-theme">Style</label><select id="f-theme"><option value="night">Nuit</option><option value="paper">Papier</option></select></div>
+        <div class="field"><label for="f-size">Format</label><select id="f-size"><option value="A4">A4</option><option value="A3">A3</option></select></div>
       </div>
-      <div class="field"><label for="f-size">Format d'impression</label><select id="f-size"><option value="A4">A4 (21 × 29,7 cm)</option><option value="A3">A3 (29,7 × 42 cm)</option></select></div>
+      <div class="field"><label>Fond</label><div class="swatches" id="swatches"></div></div>
       <button class="btn btn-main" id="go" type="button">Générer l'affiche</button>
       <button class="btn" id="print" type="button" disabled>🖨️ Imprimer / Enregistrer en PDF</button>
       <div class="msg" id="msg"></div>
@@ -155,8 +176,9 @@
 const T = {
   fr: {
     locale: 'fr-FR',
-    top: { birthF: 'Le jour où', birthM: 'Le jour où', wedding: 'Le jour où', meet: 'Le jour où', custom: '' },
-    title: { birthF: n => `${n} est née`, birthM: n => `${n} est né`, wedding: n => `${n} se sont dit oui`, meet: n => `${n} se sont rencontrés`, custom: (n, c) => c || n },
+    top: { birthF: 'Le jour où', birthM: 'Le jour où', anniv: 'Joyeux anniversaire', wedding: 'Le jour où', weddingAnniv: 'Joyeux anniversaire de mariage', meet: 'Le jour où', custom: '' },
+    sub: { anniv: "Le temps qu'il faisait le jour de ta naissance", weddingAnniv: "Le temps qu'il faisait le jour de votre mariage" },
+    title: { birthF: n => `${n} est née`, birthM: n => `${n} est né`, anniv: n => n, weddingAnniv: n => n, wedding: n => `${n} se sont dit oui`, meet: n => `${n} se sont rencontrés`, custom: (n, c) => c || n },
     at: 'à', range: 'Minimum → maximum de la journée',
     k: { atHour: "À l'heure dite", noon: 'À midi', rain: 'Pluie', snow: 'Neige', wind: 'Rafales', sun: 'Soleil', day: 'Durée du jour', moon: 'Lune' },
     none: 'aucune', unknown: 'heure inconnue',
@@ -172,8 +194,9 @@ const T = {
   },
   en: {
     locale: 'en-GB',
-    top: { birthF: 'The day', birthM: 'The day', wedding: 'The day', meet: 'The day', custom: '' },
-    title: { birthF: n => `${n} was born`, birthM: n => `${n} was born`, wedding: n => `${n} said yes`, meet: n => `${n} met`, custom: (n, c) => c || n },
+    top: { birthF: 'The day', birthM: 'The day', anniv: 'Happy birthday', wedding: 'The day', weddingAnniv: 'Happy anniversary', meet: 'The day', custom: '' },
+    sub: { anniv: 'The weather on the day you were born', weddingAnniv: 'The weather on your wedding day' },
+    title: { birthF: n => `${n} was born`, birthM: n => `${n} was born`, anniv: n => n, weddingAnniv: n => n, wedding: n => `${n} said yes`, meet: n => `${n} met`, custom: (n, c) => c || n },
     at: 'at', range: "The day's low → high",
     k: { atHour: 'At that hour', noon: 'At noon', rain: 'Rain', snow: 'Snow', wind: 'Gusts', sun: 'Sun', day: 'Daylight', moon: 'Moon' },
     none: 'none', unknown: 'time unknown',
@@ -287,13 +310,64 @@ function sunSign(mo, d) {
   return 0;
 }
 
-// Ciel étoilé décoratif (déterministe selon la date)
-function starsSVG(seed) {
-  let x = seed % 2147483647 || 1; const rnd = () => (x = x * 16807 % 2147483647) / 2147483647;
-  let s = '';
-  for (let i = 0; i < 90; i++) { const cx = rnd() * 100, cy = rnd() * 38, r = rnd() * .22 + .05;
-    s += `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}" fill="#fff" opacity="${(rnd() * .6 + .2).toFixed(2)}"/>`; }
-  return `<svg class="stars" viewBox="0 0 100 141" preserveAspectRatio="none">${s}</svg>`;
+
+// ---------- Fonds et décors ----------
+const THEMES = {
+  night:   { label: 'Nuit',       sw: 'radial-gradient(120% 90% at 50% 0%,#1d3550,#0e1c2c)', deco: 'stars' },
+  paper:   { label: 'Papier',     sw: '#f6f1e7', deco: 'frame' },
+  rose:    { label: 'Rose',       sw: 'linear-gradient(#fde7ee,#f7e2ea)', deco: 'clouds' },
+  sky:     { label: 'Ciel',       sw: 'linear-gradient(#d9ecfa,#dfeefa)', deco: 'clouds' },
+  wedding: { label: 'Ivoire',     sw: 'radial-gradient(#fffdf8,#f3e8d2)', deco: 'leaves' },
+  party:   { label: 'Fête',       sw: 'radial-gradient(120% 90% at 50% 0%,#33246b,#191238)', deco: 'confetti' },
+  dusk:    { label: 'Crépuscule', sw: 'linear-gradient(#221838,#5c2f5c)', deco: 'hearts' },
+  alpine:  { label: 'Montagne',   sw: 'linear-gradient(#0b1a29,#1f4462)', deco: 'mountains' }
+};
+const AUTO_THEME = { birthF: 'rose', birthM: 'sky', anniv: 'party', wedding: 'wedding', weddingAnniv: 'wedding', meet: 'dusk', custom: 'night' };
+
+function rng(seed) { let x = seed % 2147483647 || 1; return () => (x = x * 16807 % 2147483647) / 2147483647; }
+// Positions réservées aux bords (haut, bas, côtés) pour ne pas gêner la lecture
+function edgePoint(r) {
+  const z = r();
+  if (z < .45) return [r() * 100, r() * 22];
+  if (z < .8) return [r() * 100, 118 + r() * 22];
+  return [z < .9 ? r() * 7 : 93 + r() * 7, 22 + r() * 96];
+}
+function decoSVG(kind, seed) {
+  const r = rng(seed); let s = '';
+  if (kind === 'stars') {
+    for (let i = 0; i < 90; i++) s += `<circle cx="${(r() * 100).toFixed(2)}" cy="${(r() * 40).toFixed(2)}" r="${(r() * .22 + .05).toFixed(2)}" fill="#fff" opacity="${(r() * .5 + .2).toFixed(2)}"/>`;
+  } else if (kind === 'clouds') {
+    const cloud = (x, y, k, o) => `<g opacity="${o}" fill="#fff"><ellipse cx="${x}" cy="${y}" rx="${9 * k}" ry="${3.2 * k}"/><circle cx="${x - 3 * k}" cy="${y - 1.8 * k}" r="${3.4 * k}"/><circle cx="${x + 2.6 * k}" cy="${y - 2.6 * k}" r="${4.4 * k}"/></g>`;
+    s = cloud(14, 12, 1.1, .9) + cloud(84, 8, .9, .85) + cloud(62, 22, .6, .6) + cloud(10, 128, 1, .8) + cloud(88, 132, 1.2, .85) + cloud(50, 137, .7, .6);
+    for (let i = 0; i < 22; i++) { const [x, y] = edgePoint(r);
+      s += `<path d="M${x} ${y - 1} L${x + .3} ${y - .3} L${x + 1} ${y} L${x + .3} ${y + .3} L${x} ${y + 1} L${x - .3} ${y + .3} L${x - 1} ${y} L${x - .3} ${y - .3}Z" fill="var(--p-accent)" opacity="${(r() * .4 + .35).toFixed(2)}"/>`; }
+  } else if (kind === 'confetti') {
+    const cols = ['#ffd166', '#ff7aa2', '#7ee4b8', '#9fb4ff', '#ffab85'];
+    for (let i = 0; i < 95; i++) { const [x, y] = edgePoint(r), c = cols[Math.floor(r() * cols.length)], a = Math.round(r() * 180);
+      s += r() < .6 ? `<rect x="${(x - .7).toFixed(2)}" y="${(y - .35).toFixed(2)}" width="1.4" height=".7" rx=".15" fill="${c}" transform="rotate(${a} ${x.toFixed(2)} ${y.toFixed(2)})" opacity=".9"/>`
+                    : `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(r() * .35 + .3).toFixed(2)}" fill="${c}" opacity=".85"/>`; }
+    for (let i = 0; i < 6; i++) { const x = 6 + i * 17 + r() * 6;
+      s += `<path d="M${x} -1 q 2 4 0 8 t 0 8" stroke="${cols[i % cols.length]}" stroke-width=".35" fill="none" opacity=".7"/>`; }
+  } else if (kind === 'leaves') {
+    const branch = `<g fill="none" stroke="var(--p-accent)" stroke-width=".35" stroke-linecap="round">
+      <path d="M2 30 C 6 18, 14 8, 30 3"/>` +
+      [[5, 22, -50], [8, 16, -40], [12, 11, -30], [17, 7, -20], [23, 4.5, -10], [4, 26, 30], [7, 19, 40], [11, 13.5, 50], [16, 9, 60], [22, 5.6, 70]]
+        .map(([x, y, a]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="1" transform="rotate(${a} ${x} ${y})" fill="var(--p-accent2)" fill-opacity=".25"/>`).join('') + `</g>`;
+    s = branch + `<g transform="rotate(180 50 70.5)">${branch}</g>` +
+      `<rect x="3.2" y="3.2" width="93.6" height="134.6" fill="none" stroke="var(--p-accent)" stroke-width=".3" opacity=".7"/>` +
+      `<rect x="4.4" y="4.4" width="91.2" height="132.2" fill="none" stroke="var(--p-accent)" stroke-width=".12" opacity=".7"/>`;
+  } else if (kind === 'hearts') {
+    for (let i = 0; i < 26; i++) { const [x, y] = edgePoint(r), k = r() * .7 + .4;
+      s += `<path transform="translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${k.toFixed(2)})" d="M0 1.6 C -2.6 -0.4, -1.4 -2.4, 0 -1.2 C 1.4 -2.4, 2.6 -0.4, 0 1.6Z" fill="var(--p-accent2)" opacity="${(r() * .35 + .25).toFixed(2)}"/>`; }
+    for (let i = 0; i < 40; i++) s += `<circle cx="${(r() * 100).toFixed(2)}" cy="${(r() * 30).toFixed(2)}" r="${(r() * .18 + .05).toFixed(2)}" fill="#fff" opacity="${(r() * .5 + .2).toFixed(2)}"/>`;
+  } else if (kind === 'mountains') {
+    for (let i = 0; i < 70; i++) s += `<circle cx="${(r() * 100).toFixed(2)}" cy="${(r() * 34).toFixed(2)}" r="${(r() * .2 + .05).toFixed(2)}" fill="#fff" opacity="${(r() * .5 + .2).toFixed(2)}"/>`;
+    s += `<g transform="translate(0 141) scale(1 .36) translate(0 -141)"><path d="M0 141 V118 L10 110 L18 114 L30 101 L38 107 L47 97 L58 108 L66 103 L77 112 L88 104 L100 113 V141Z" fill="#284f6f" opacity=".55"/>` +
+         `<path d="M0 141 V126 L12 119 L22 124 L35 114 L46 121 L57 115 L70 123 L82 117 L92 122 L100 119 V141Z" fill="#1a3a55" opacity=".85"/>` + `</g>`;
+  } else if (kind === 'frame') {
+    s = `<rect x="4" y="4" width="92" height="133" fill="none" stroke="var(--p-ink)" stroke-width=".18" opacity=".35"/>`;
+  }
+  return `<svg class="deco" viewBox="0 0 100 141" preserveAspectRatio="none">${s}</svg>`;
 }
 
 // ---------- Données ----------
@@ -318,7 +392,8 @@ async function fetchHistory(place) {
 function render(o) {
   const L = T[o.lang];
   const P = $('poster');
-  P.className = 'poster' + (o.theme === 'paper' ? ' paper' : '');
+  const themeKey = o.theme === 'auto' ? AUTO_THEME[o.kind] : o.theme;
+  P.className = 'poster t-' + themeKey;
   const dateObj = new Date(Date.UTC(o.date.y, o.date.mo - 1, o.date.d, 12));
   const dateTxt = dateObj.toLocaleDateString(L.locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
   const timeTxt = o.time ? (o.lang === 'fr' ? `${o.time.h} h ${pad(o.time.mi)}` : `${pad(o.time.h)}:${pad(o.time.mi)}`) : null;
@@ -373,9 +448,10 @@ function render(o) {
   const title = o.kind === 'custom' ? esc(L.title.custom(o.name, o.custom)) : L.title[o.kind](name);
   const placeName = esc(o.place.name), placeRest = esc(o.place.country || '');
   P.innerHTML = `
-    ${starsSVG(o.date.y * 10000 + o.date.mo * 100 + o.date.d)}
+    ${decoSVG(THEMES[themeKey].deco, o.date.y * 10000 + o.date.mo * 100 + o.date.d)}
     ${L.top[o.kind] ? `<div class="top">${L.top[o.kind]}</div>` : ''}
     <div class="title">${title}</div>
+    ${L.sub && L.sub[o.kind] ? `<div class="subline">${L.sub[o.kind]}</div>` : ''}
     <div class="when">${dateTxt}${timeTxt ? ` · ${timeTxt}` : ''}</div>
     <div class="where">${placeName}${placeRest ? ' · ' + placeRest : ''}</div>
     <div class="hero">
@@ -410,7 +486,7 @@ $('f-notime').addEventListener('change', () => { $('f-time').disabled = $('f-not
 $('f-kind').addEventListener('change', () => {
   const k = $('f-kind').value;
   $('custom-wrap').classList.toggle('hidden', k !== 'custom');
-  $('l-name').textContent = k.startsWith('birth') ? 'Prénom' : k === 'custom' ? 'Prénom(s) (facultatif)' : 'Prénoms (ex. : Léa & Tom)';
+  $('l-name').textContent = (k.startsWith('birth') || k === 'anniv') ? 'Prénom' : k === 'custom' ? 'Prénom(s) (facultatif)' : 'Prénoms (ex. : Léa & Tom)';
 });
 $('f-size').addEventListener('change', () => {
   const a3 = $('f-size').value === 'A3';
@@ -461,7 +537,7 @@ $('go').addEventListener('click', async () => {
       histCache[key] ? Promise.resolve(histCache[key]) : fetchHistory(chosen).then(h => (histCache[key] = h)).catch(() => null)
     ]);
     if (!day.daily || day.daily.temperature_2m_max[0] == null) throw new Error('vide');
-    render({ lang: $('f-lang').value, theme: $('f-theme').value, kind, name, custom, note: $('f-note').value.trim(), date, time, place: chosen, day, hist });
+    render({ lang: $('f-lang').value, theme: currentTheme, kind, name, custom, note: $('f-note').value.trim(), date, time, place: chosen, day, hist });
     $('print').disabled = false;
     msg(hist ? 'Affiche prête.' : 'Affiche prête (comparaison 1940 → aujourd\'hui indisponible).');
   } catch (e) {
@@ -469,7 +545,23 @@ $('go').addEventListener('click', async () => {
   } finally { $('go').disabled = false; }
 });
 $('print').addEventListener('click', () => window.print());
-['f-lang', 'f-theme'].forEach(id => $(id).addEventListener('change', () => { if (!$('print').disabled) $('go').click(); }));
+['f-lang', 'f-kind'].forEach(id => $(id).addEventListener('change', () => { if (!$('print').disabled) $('go').click(); }));
+
+// Sélecteur de fond : « Auto » suit l'occasion
+let currentTheme = 'auto';
+function drawSwatches() {
+  const k = $('f-kind').value, autoKey = AUTO_THEME[k];
+  const items = [['auto', 'Auto', THEMES[autoKey].sw], ...Object.entries(THEMES).map(([key, t]) => [key, t.label, t.sw])];
+  $('swatches').innerHTML = items.map(([key, label, bg]) =>
+    `<button type="button" class="sw${key === currentTheme ? ' on' : ''}" data-t="${key}" title="${key === 'auto' ? 'Selon l\'occasion : ' + THEMES[autoKey].label : label}"><span style="background:${bg}"></span><small>${label}</small></button>`).join('');
+}
+$('swatches').addEventListener('click', e => {
+  const b = e.target.closest('.sw'); if (!b) return;
+  currentTheme = b.dataset.t; drawSwatches();
+  if (!$('print').disabled) $('go').click();
+});
+$('f-kind').addEventListener('change', drawSwatches);
+drawSwatches();
 
 // Affiche d'exemple au chargement (Lyon), pour voir le rendu tout de suite
 chosen = { name: 'Lyon', country: 'France', lat: 45.7485, lon: 4.8467 };
