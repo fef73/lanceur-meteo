@@ -33,6 +33,7 @@
   .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--live);}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-lo);margin-top:5px;font-family:'IBM Plex Mono',monospace;}
+  .field input[type=checkbox]{width:auto;margin:0;padding:0;flex:none;accent-color:var(--live);}
   .field label.check{display:flex;text-transform:none;letter-spacing:0;font-size:12px;margin:6px 0 0;}
   .suggest{position:absolute;left:0;right:0;top:100%;z-index:20;background:var(--bg-card);border:1px solid var(--hairline);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);}
   .suggest button{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--hairline);color:var(--text-hi);padding:9px 12px;cursor:pointer;font:13px 'Space Grotesk',sans-serif;}
@@ -44,6 +45,9 @@
   .btn:disabled{opacity:.5;cursor:default;}
   .msg{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-lo);margin-top:10px;min-height:1.2em;}
   .msg.err{color:var(--coral);}
+  .group{border:1px solid var(--hairline);border-radius:12px;padding:12px 12px 2px;margin:4px 0 14px;background:rgba(255,255,255,.015);}
+  .group-title{font-size:13px;font-weight:600;margin:0 0 2px;}
+  .group-hint{font-size:11.5px;color:var(--text-lo);margin:0 0 10px;line-height:1.4;}
   .help{font-size:12px;color:var(--text-lo);line-height:1.5;margin-top:14px;padding-top:12px;border-top:1px solid var(--hairline);}
   .hidden{display:none !important;}
 
@@ -149,16 +153,23 @@
         </select></div>
       <div class="field"><label for="f-name" id="l-name">Prénom(s)</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-name" type="text" maxlength="40" placeholder="Léa" value="Léa"></div>
       <div class="field hidden" id="custom-wrap"><label for="f-custom">Titre complet</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-custom" type="text" maxlength="60" placeholder="Notre premier rendez-vous"></div>
-      <div class="row2">
-        <div class="field"><label for="f-date">Date</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-date" type="text" inputmode="numeric" maxlength="10" placeholder="JJ/MM/AAAA" value="14/07/1985"></div>
-        <div class="field"><label for="f-time">Heure</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-time" type="text" inputmode="numeric" maxlength="5" placeholder="HH:MM" value="08:30">
-          <label class="check"><input type="checkbox" id="f-notime"> inconnue</label></div>
+      <div class="group">
+        <div class="group-title" id="g1-title">📅 Naissance</div>
+        <div class="group-hint" id="g1-hint">C'est la météo de ce jour-là qui est affichée.</div>
+        <div class="row2">
+          <div class="field"><label for="f-date" id="l-date">Date de naissance</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-date" type="text" inputmode="numeric" maxlength="10" placeholder="JJ/MM/AAAA" value="14/07/1985"></div>
+          <div class="field"><label for="f-time" id="l-time">Heure de naissance</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-time" type="text" inputmode="numeric" maxlength="5" placeholder="HH:MM" value="08:30">
+            <label class="check"><input type="checkbox" id="f-notime"> inconnue</label></div>
+        </div>
+        <div class="field"><label for="f-place" id="l-place">Lieu de naissance</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-place" type="text" placeholder="Ville…" value="">
+          <div class="suggest hidden" id="suggest"></div></div>
       </div>
-      <div class="field"><label for="f-place">Lieu</label><input data-lpignore="true" data-1p-ignore data-form-type="other" id="f-place" type="text" autocomplete="off" placeholder="Ville…" value="">
-        <div class="suggest hidden" id="suggest"></div></div>
-      <div class="field"><label class="check" style="font-size:13px;color:var(--text-hi)"><input type="checkbox" id="f-age"> Afficher l'âge (ou les années de mariage)</label></div>
-      <div class="field hidden" id="age-wrap"><label for="f-agedate">Âge au</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-agedate" type="text" inputmode="numeric" maxlength="10" placeholder="JJ/MM/AAAA">
-        <label class="check" style="text-transform:none">Par défaut : le prochain anniversaire de la date</label></div>
+      <div class="group" id="g2">
+        <div class="group-title">🎉 Date de l'évènement</div>
+        <div class="group-hint" id="g2-hint">La fête ou le jour où l'affiche est offerte : sert à calculer l'âge. Par défaut, le prochain anniversaire.</div>
+        <div class="field"><label for="f-agedate">Date de l'évènement</label><input data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-agedate" type="text" inputmode="numeric" maxlength="10" placeholder="JJ/MM/AAAA"></div>
+        <div class="field"><label class="check" style="font-size:13px;color:var(--text-hi)"><input type="checkbox" id="f-age"> <span id="l-age">Afficher l'âge sur l'affiche</span></label></div>
+      </div>
       <div class="field"><label for="f-note">Message (facultatif)</label><textarea data-lpignore="true" data-1p-ignore data-form-type="other" autocomplete="off" id="f-note" maxlength="140" placeholder="Bienvenue parmi nous !"></textarea></div>
       <div class="row2">
         <div class="field"><label for="f-lang">Langue</label><select id="f-lang"><option value="fr">Français</option><option value="en">English</option></select></div>
@@ -532,17 +543,38 @@ const msg = (t, err) => { $('msg').textContent = t; $('msg').className = 'msg' +
 autoFormat($('f-date'), [2, 2, 4], '/');
 autoFormat($('f-time'), [2, 2], ':');
 autoFormat($('f-agedate'), [2, 2, 4], '/');
-$('f-age').addEventListener('change', () => {
-  $('age-wrap').classList.toggle('hidden', !$('f-age').checked);
-  if (!$('print').disabled) $('go').click();
-});
-$('f-date').addEventListener('change', () => { $('f-agedate').value = ''; });
+$('f-age').addEventListener('change', () => { if (!$('print').disabled) $('go').click(); });
+// Date de l'évènement pré-remplie avec le prochain anniversaire de la date
+function fillEventDate(force) {
+  const d = parseDate($('f-date').value);
+  if (d && (force || !$('f-agedate').value.trim())) { const na = nextAnniversary(d); $('f-agedate').value = `${pad(na.d)}/${pad(na.mo)}/${na.y}`; }
+}
+$('f-date').addEventListener('change', () => fillEventDate(true));
+$('f-date').addEventListener('input', () => { if ($('f-date').value.length === 10) fillEventDate(true); });
 $('f-notime').addEventListener('change', () => { $('f-time').disabled = $('f-notime').checked; });
 $('f-kind').addEventListener('change', () => {
   const k = $('f-kind').value;
   $('custom-wrap').classList.toggle('hidden', k !== 'custom');
   $('l-name').textContent = (k.startsWith('birth') || k === 'anniv') ? 'Prénom' : k === 'custom' ? 'Prénom(s) (facultatif)' : 'Prénoms (ex. : Léa & Tom)';
+  updateLabels(true);
 });
+const LABELS = {
+  birth:   { g: '📅 Naissance', date: 'Date de naissance', time: 'Heure de naissance', place: 'Lieu de naissance', age: "Afficher l'âge sur l'affiche" },
+  wedding: { g: '💍 Mariage', date: 'Date du mariage', time: 'Heure de la cérémonie', place: 'Lieu du mariage', age: 'Afficher les années de mariage' },
+  meet:    { g: '💞 Rencontre', date: 'Date de la rencontre', time: 'Heure', place: 'Lieu de la rencontre', age: 'Afficher les années ensemble' },
+  custom:  { g: '📅 Jour à raconter', date: 'Date', time: 'Heure', place: 'Lieu', age: 'Afficher le nombre d\'années' }
+};
+function updateLabels(fromKind) {
+  const k = $('f-kind').value;
+  const L = LABELS[k.startsWith('birth') || k === 'anniv' ? 'birth' : k.startsWith('wedding') ? 'wedding' : k];
+  $('g1-title').textContent = L.g; $('l-date').textContent = L.date; $('l-time').textContent = L.time; $('l-place').textContent = L.place; $('l-age').textContent = L.age;
+  // L'évènement n'a de sens que pour les anniversaires, les rencontres et les titres libres
+  const showEvent = ['anniv', 'weddingAnniv', 'meet', 'custom'].includes(k);
+  $('g2').classList.toggle('hidden', !showEvent);
+  if (fromKind) $('f-age').checked = (k === 'anniv' || k === 'weddingAnniv');
+  if (showEvent) fillEventDate(false);
+}
+updateLabels(false);
 $('f-size').addEventListener('change', () => {
   const a3 = $('f-size').value === 'A3';
   $('page-size').textContent = `@page { size: ${a3 ? 'A3' : 'A4'} portrait; margin: 0; }`;
@@ -585,7 +617,7 @@ $('go').addEventListener('click', async () => {
   if (!chosen) return msg('Choisissez le lieu dans la liste proposée.', true);
   const kind = $('f-kind').value, name = $('f-name').value.trim(), custom = $('f-custom').value.trim();
   let age = null;
-  if ($('f-age').checked) {
+  if ($('f-age').checked && !$('g2').classList.contains('hidden')) {
     if (!$('f-agedate').value.trim()) { const na = nextAnniversary(date); $('f-agedate').value = `${pad(na.d)}/${pad(na.mo)}/${na.y}`; }
     age = parseDate($('f-agedate').value);
     if (!age) return msg("Date de l'âge invalide : JJ/MM/AAAA.", true);
