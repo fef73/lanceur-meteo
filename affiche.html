@@ -57,7 +57,7 @@
     container-type:inline-size; width:100%; aspect-ratio:210/297; position:relative; overflow:hidden;
     background:radial-gradient(120% 70% at 50% 0%, #1d3550 0%, var(--p-bg) 60%); color:var(--p-ink);
     font-family:'Space Grotesk',sans-serif; display:flex; flex-direction:column;
-    padding:8cqw 8cqw 6cqw;
+    padding:0;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
   }
   /* Fonds */
@@ -75,6 +75,7 @@
     background:linear-gradient(180deg,#221838 0%,#3d2453 55%,#5c2f5c 100%);}
   .poster.t-alpine{--p-bg:#0f2233; --p-ink:#eef4f8; --p-soft:#9db4c7; --p-line:rgba(238,244,248,.16); --p-accent:#f4a261; --p-accent2:#9fd3f2;
     background:linear-gradient(180deg,#0b1a29 0%,#16324a 70%,#1f4462 100%);}
+  .poster .pin{position:relative;flex:1;display:flex;flex-direction:column;padding:calc(8cqw*var(--s,1)) calc(8cqw*var(--s,1)) calc(6.5cqw*var(--s,1));min-height:0;}
   .poster .deco{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
   /* Sélecteur de fond */
   .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
@@ -83,49 +84,50 @@
   .sw small{display:block;font:10.5px 'IBM Plex Mono',monospace;color:var(--text-lo);padding:3px 0 4px;background:var(--bg-card);}
   .sw.on{border-color:var(--live);}
   .sw.on small{color:var(--text-hi);}
-  .poster .top{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.35em;text-transform:uppercase;color:var(--p-soft);text-align:center;position:relative;}
-  .poster .title{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:10.5cqw;line-height:1.02;text-align:center;margin:2.2cqw 0 2.6cqw;position:relative;letter-spacing:-.01em;}
-  .poster .agebadge{text-align:center;margin:0 0 2.6cqw;position:relative;}
-  .poster .agebadge span{display:inline-block;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:4.6cqw;color:var(--p-accent);
-    border-top:1px solid var(--p-accent);border-bottom:1px solid var(--p-accent);padding:.6cqw 3cqw;}
-  .poster .agebadge small{display:block;font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:1.8cqw;letter-spacing:.12em;text-transform:uppercase;color:var(--p-soft);margin-top:1cqw;}
-  .poster .subline{font-family:'Fraunces',serif;font-style:italic;font-size:3.4cqw;text-align:center;color:var(--p-soft);margin:-1cqw 0 2.4cqw;position:relative;}
-  .poster .when{font-family:'Fraunces',serif;font-size:3.6cqw;text-align:center;color:var(--p-ink);position:relative;}
-  .poster .where{font-family:'IBM Plex Mono',monospace;font-size:2.3cqw;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--p-soft);margin-top:1.2cqw;position:relative;}
-  .poster .hero{display:flex;align-items:center;justify-content:center;gap:5cqw;margin:9cqw 0 7cqw;position:relative;}
-  .poster .wx-ico{width:22cqw;height:22cqw;}
+  .poster .top{font-family:'IBM Plex Mono',monospace;font-size:calc(2.3cqw*var(--s,1));letter-spacing:.35em;text-transform:uppercase;color:var(--p-soft);text-align:center;position:relative;}
+  .poster .title{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:calc(10.5cqw*var(--s,1));line-height:1.02;text-align:center;margin:calc(2.2cqw*var(--s,1)) 0 calc(2.6cqw*var(--s,1));position:relative;letter-spacing:-.01em;}
+  .poster .agebadge{text-align:center;margin:0 0 calc(2.6cqw*var(--s,1));position:relative;}
+  .poster .agebadge span{display:inline-block;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:calc(4.6cqw*var(--s,1));color:var(--p-accent);
+    border-top:1px solid var(--p-accent);border-bottom:1px solid var(--p-accent);padding:.6cqw calc(3cqw*var(--s,1));}
+  .poster .agebadge small{display:block;font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:calc(1.8cqw*var(--s,1));letter-spacing:.12em;text-transform:uppercase;color:var(--p-soft);margin-top:calc(1cqw*var(--s,1));}
+  .poster .subline{font-family:'Fraunces',serif;font-style:italic;font-size:calc(3.4cqw*var(--s,1));text-align:center;color:var(--p-soft);margin:calc(-1cqw*var(--s,1)) 0 calc(2.4cqw*var(--s,1));position:relative;}
+  .poster .when{font-family:'Fraunces',serif;font-size:calc(3.6cqw*var(--s,1));text-align:center;color:var(--p-ink);position:relative;}
+  .poster .where{font-family:'IBM Plex Mono',monospace;font-size:calc(2.3cqw*var(--s,1));letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--p-soft);margin-top:calc(1.2cqw*var(--s,1));position:relative;}
+  .poster .hero{display:flex;align-items:center;justify-content:center;gap:calc(5cqw*var(--s,1));margin:calc(6cqw*var(--s,1)) 0 calc(5cqw*var(--s,1));position:relative;}
+  .poster .wx-ico{width:calc(22cqw*var(--s,1));height:calc(22cqw*var(--s,1));}
   .poster .temps{text-align:left;}
-  .poster .wx-label{font-family:'Fraunces',serif;font-style:italic;font-size:5cqw;line-height:1.1;margin-bottom:1.4cqw;}
-  .poster .range{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:8.4cqw;line-height:1;white-space:nowrap;}
-  .poster .range .arrow{color:var(--p-soft);font-weight:400;font-size:5cqw;margin:0 1cqw;vertical-align:.6cqw;}
-  .poster .range-cap{font-family:'IBM Plex Mono',monospace;font-size:1.9cqw;color:var(--p-soft);letter-spacing:.08em;text-transform:uppercase;margin-top:1.2cqw;}
+  .poster .wx-label{font-family:'Fraunces',serif;font-style:italic;font-size:calc(5cqw*var(--s,1));line-height:1.1;margin-bottom:calc(1.4cqw*var(--s,1));}
+  .poster .range{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:calc(8.4cqw*var(--s,1));line-height:1;white-space:nowrap;}
+  .poster .range .arrow{color:var(--p-soft);font-weight:400;font-size:calc(5cqw*var(--s,1));margin:0 calc(1cqw*var(--s,1));vertical-align:.6cqw;}
+  .poster .range-cap{font-family:'IBM Plex Mono',monospace;font-size:calc(1.9cqw*var(--s,1));color:var(--p-soft);letter-spacing:.08em;text-transform:uppercase;margin-top:calc(1.2cqw*var(--s,1));}
   .poster .grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--p-line);border-bottom:1px solid var(--p-line);position:relative;}
-  .poster .cell{padding:4.4cqw 1.5cqw;text-align:center;}
+  .poster .cell{padding:calc(3.2cqw*var(--s,1)) calc(1.5cqw*var(--s,1));text-align:center;}
   .poster .cell + .cell{border-left:1px solid var(--p-line);}
   .poster .cell:nth-child(4){border-left:none;}
   .poster .cell:nth-child(n+4){border-top:1px solid var(--p-line);}
-  .poster .k{font-family:'IBM Plex Mono',monospace;font-size:1.75cqw;letter-spacing:.12em;text-transform:uppercase;color:var(--p-soft);}
-  .poster .v{font-family:'Fraunces',serif;font-size:4.6cqw;margin-top:1cqw;line-height:1.1;}
-  .poster .v small{font-size:2.6cqw;color:var(--p-soft);}
-  .poster .moon{width:5.6cqw;height:5.6cqw;vertical-align:-1.2cqw;margin-right:1cqw;}
-  .poster .rank{margin-top:8cqw;position:relative;}
-  .poster .rank-txt{font-family:'Fraunces',serif;font-size:3.5cqw;text-align:center;line-height:1.3;}
+  .poster .k{font-family:'IBM Plex Mono',monospace;font-size:calc(1.75cqw*var(--s,1));letter-spacing:.12em;text-transform:uppercase;color:var(--p-soft);}
+  .poster .v{font-family:'Fraunces',serif;font-size:calc(4.6cqw*var(--s,1));margin-top:calc(1cqw*var(--s,1));line-height:1.1;}
+  .poster .v small{font-size:calc(2.6cqw*var(--s,1));color:var(--p-soft);}
+  .poster .moon{width:calc(5.6cqw*var(--s,1));height:calc(5.6cqw*var(--s,1));vertical-align:calc(-1.2cqw*var(--s,1));margin-right:calc(1cqw*var(--s,1));}
+  .poster .rank{margin-top:calc(5.5cqw*var(--s,1));position:relative;}
+  .poster .rank-txt{font-family:'Fraunces',serif;font-size:calc(3.5cqw*var(--s,1));text-align:center;line-height:1.3;}
   .poster .rank-txt b{color:var(--p-accent);font-weight:600;}
-  .poster .bars{display:block;width:100%;height:17cqw;margin-top:3cqw;}
+  .poster .bars{display:block;width:100%;height:calc(13cqw*var(--s,1));margin-top:calc(2.6cqw*var(--s,1));}
   .poster .bars-wrap{position:relative;}
-  .poster .me-year{position:absolute;bottom:-3.2cqw;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:1.9cqw;font-weight:600;color:var(--p-accent);}
-  .poster .bars-cap{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:1.7cqw;color:var(--p-soft);margin-top:4cqw;}
-  .poster .note{font-family:'Fraunces',serif;font-style:italic;font-size:3.8cqw;text-align:center;margin-top:7cqw;color:var(--p-ink);position:relative;}
-  .poster .foot{margin-top:auto;padding-top:3cqw;display:flex;justify-content:space-between;align-items:flex-end;gap:2cqw;
-    font-family:'IBM Plex Mono',monospace;font-size:1.55cqw;color:var(--p-soft);position:relative;line-height:1.5;}
-  .poster .foot .sign{font-size:2cqw;letter-spacing:.1em;text-transform:uppercase;text-align:right;}
+  .poster .me-year{position:absolute;bottom:calc(-3.2cqw*var(--s,1));transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:calc(1.9cqw*var(--s,1));font-weight:600;color:var(--p-accent);}
+  .poster .bars-cap{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:calc(1.7cqw*var(--s,1));color:var(--p-soft);margin-top:calc(4cqw*var(--s,1));}
+  .poster .note{font-family:'Fraunces',serif;font-style:italic;font-size:calc(3.8cqw*var(--s,1));text-align:center;margin-top:calc(4.5cqw*var(--s,1));color:var(--p-ink);position:relative;}
+  .poster .foot{margin-top:auto;padding-top:calc(3cqw*var(--s,1));display:flex;justify-content:space-between;align-items:flex-end;gap:calc(2cqw*var(--s,1));
+    font-family:'IBM Plex Mono',monospace;font-size:calc(1.55cqw*var(--s,1));color:var(--p-soft);position:relative;line-height:1.5;}
+  .poster .foot .sign{font-size:calc(2cqw*var(--s,1));letter-spacing:.1em;text-transform:uppercase;text-align:right;}
 
   @media print{
-    body{background:none;padding:0;}
-    .panel,h1,.sub{display:none !important;}
-    .app{display:block;max-width:none;}
-    .preview .sheet-wrap{max-width:none;box-shadow:none;width:var(--print-w,210mm);}
-    .poster{width:var(--print-w,210mm);}
+    html,body{background:none;padding:0;margin:0;width:var(--print-w,210mm);}
+    .app > div:first-child{display:none !important;}
+    .app{display:block;max-width:none;margin:0;}
+    .preview{display:block;}
+    .preview .sheet-wrap{max-width:none;box-shadow:none;width:var(--print-w,210mm);height:var(--print-h,297mm);overflow:hidden;}
+    .poster{width:var(--print-w,210mm);height:var(--print-h,297mm);aspect-ratio:auto;break-inside:avoid;page-break-inside:avoid;}
   }
 </style>
 </head>
@@ -484,6 +486,7 @@ function render(o) {
   const placeName = esc(o.place.name), placeRest = esc(o.place.country || '');
   P.innerHTML = `
     ${decoSVG(THEMES[themeKey].deco, o.date.y * 10000 + o.date.mo * 100 + o.date.d)}
+    <div class="pin">
     ${L.top[o.kind] ? `<div class="top">${L.top[o.kind]}</div>` : ''}
     <div class="title">${title}</div>
     ${L.sub && L.sub[o.kind] ? `<div class="subline">${L.sub[o.kind]}</div>` : ''}
@@ -511,8 +514,18 @@ function render(o) {
     <div class="foot">
       <div>${L.src}<br>comparateur-meteo.fr</div>
       <div class="sign">${L.sign}<br>${SIGN_GLYPH[si]}&#xFE0E; ${L.signs[si]}</div>
+    </div>
     </div>`;
 }
+
+// Ajuste l'échelle pour que tout tienne sur la page (titres ou messages longs)
+function fitPoster() {
+  const P = $('poster'), pin = P.querySelector('.pin'); if (!pin) return;
+  let k = 1; P.style.setProperty('--s', k);
+  while (pin.scrollHeight > pin.clientHeight + 1 && k > 0.62) { k -= 0.02; P.style.setProperty('--s', k.toFixed(2)); }
+}
+window.addEventListener('resize', fitPoster);
+window.addEventListener('beforeprint', fitPoster);
 
 // ---------- Formulaire ----------
 const msg = (t, err) => { $('msg').textContent = t; $('msg').className = 'msg' + (err ? ' err' : ''); };
@@ -534,6 +547,7 @@ $('f-size').addEventListener('change', () => {
   const a3 = $('f-size').value === 'A3';
   $('page-size').textContent = `@page { size: ${a3 ? 'A3' : 'A4'} portrait; margin: 0; }`;
   document.documentElement.style.setProperty('--print-w', a3 ? '297mm' : '210mm');
+  document.documentElement.style.setProperty('--print-h', a3 ? '420mm' : '297mm');
 });
 
 let chosen = null, timer = null;
@@ -587,6 +601,7 @@ $('go').addEventListener('click', async () => {
     ]);
     if (!day.daily || day.daily.temperature_2m_max[0] == null) throw new Error('vide');
     render({ lang: $('f-lang').value, theme: currentTheme, kind, name, custom, age, note: $('f-note').value.trim(), date, time, place: chosen, day, hist });
+    fitPoster(); if (document.fonts) document.fonts.ready.then(fitPoster);
     $('print').disabled = false;
     msg(hist ? 'Affiche prête.' : 'Affiche prête (comparaison 1940 → aujourd\'hui indisponible).');
   } catch (e) {
