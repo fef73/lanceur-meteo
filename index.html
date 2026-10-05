@@ -327,6 +327,22 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
       </span>
     </a>
+    <a class="card" style="--accent: #9b8cff" href="https://fef73.github.io/mairies-pdf/" target="_blank" rel="noopener">
+      <span class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 3v5h5"/>
+          <path d="M9 17v-3M12 17v-6M15 17v-2"/>
+        </svg>
+      </span>
+      <span class="card-text">
+        <p class="title" id="card6-title">Fiche climat mairies</p>
+        <p class="desc" id="card6-desc">fiche A4 / PDF — accès réservé</p>
+      </span>
+      <span class="chevron">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </span>
+    </a>
   </main>
 
   <div class="features-panel" id="features-panel"></div>
@@ -351,6 +367,8 @@ const TRANSLATIONS = {
     card4Desc: "conditions neige / montagne",
     card5Title: "Météo astrale famille",
     card5Desc: "horoscope du jour — thème natal",
+    card6Title: "Fiche climat mairies",
+    card6Desc: "fiche A4 / PDF — accès réservé",
     footer: "Appuie sur une carte pour ouvrir la prévision",
     geoBtn: "📍 Ma position",
     geoBusy: "Localisation…",
@@ -376,6 +394,8 @@ const TRANSLATIONS = {
     card4Desc: "snow / mountain conditions",
     card5Title: "Family astro weather",
     card5Desc: "daily horoscope — birth chart",
+    card6Title: "Town climate sheet",
+    card6Desc: "A4 sheet / PDF — restricted access",
     footer: "Tap a card to open the forecast",
     geoBtn: "📍 My location",
     geoBusy: "Locating…",
@@ -413,6 +433,7 @@ const FEATURES_CONTENT = {
         <h3>✨ Et aussi</h3>
         <ul>
           <li><b>Météo astrale famille</b> : horoscope du jour et sur 7 jours, thème natal avec roue du ciel, à partir de la date, de l'heure et du lieu de naissance</li>
+          <li><b>Fiche climat mairies</b> : fiche climat A4 d'une commune (normales, évolution depuis 1950, extrêmes, neige, qualité de l'air), à imprimer ou enregistrer en PDF — accès par mot de passe</li>
         </ul>
         <h3>📍 Ma position (GPS)</h3>
         <ul>
@@ -462,6 +483,7 @@ const FEATURES_CONTENT = {
         <h3>✨ Also</h3>
         <ul>
           <li><b>Family astro weather</b>: daily and 7-day horoscope, birth chart with sky wheel, from date, time and place of birth</li>
+          <li><b>Town climate sheet</b>: one-page A4 climate sheet for a town (normals, trend since 1950, extremes, snow, air quality), to print or save as PDF — password access</li>
         </ul>
         <h3>📍 My location (GPS)</h3>
         <ul>
@@ -522,6 +544,8 @@ function applyTranslations(){
   document.getElementById("card4-desc").textContent = t("card4Desc");
   document.getElementById("card5-title").textContent = t("card5Title");
   document.getElementById("card5-desc").textContent = t("card5Desc");
+  document.getElementById("card6-title").textContent = t("card6Title");
+  document.getElementById("card6-desc").textContent = t("card6Desc");
   document.getElementById("footer-text").textContent = t("footer");
   renderFeatures();
   renderProfileTexts();
