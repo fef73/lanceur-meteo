@@ -348,6 +348,22 @@ document.getElementById('lock').addEventListener('submit', e => {
       </span>
     </a>
 
+    <a class="card" style="--accent: #f6c453" href="https://fef73.github.io/meteo-travel/" target="_blank" rel="noopener">
+      <span class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
+        </svg>
+      </span>
+      <span class="card-text">
+        <p class="title" id="card9-title">Prévisions Météo voyage</p>
+        <p class="desc" id="card9-desc">monde entier — FR/EN — °C/°F</p>
+      </span>
+      <span class="chevron">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </span>
+    </a>
+
     <a class="card" style="--accent: var(--coral)" href="https://fef73.github.io/evolution-temperatures/" target="_blank" rel="noopener">
       <span class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -447,6 +463,8 @@ const TRANSLATIONS = {
     card2Desc: "comparateur de températures",
     card8Title: "Prévisions Météo trajet",
     card8Desc: "le temps à chaque étape — 16 jours",
+    card9Title: "Prévisions Météo voyage",
+    card9Desc: "monde entier — FR/EN — °C/°F",
     card3Title: "Historique Météo ville",
     card3Desc: "évolution des températures",
     card4Title: "Historique Météo neige",
@@ -478,6 +496,8 @@ const TRANSLATIONS = {
     card2Desc: "temperature comparator",
     card8Title: "Trip weather forecast",
     card8Desc: "weather at each stop — 16 days",
+    card9Title: "Travel weather forecast",
+    card9Desc: "worldwide — FR/EN — °C/°F",
     card3Title: "City weather history",
     card3Desc: "temperature trends",
     card4Title: "Snow weather history",
@@ -515,11 +535,12 @@ const FEATURES_CONTENT = {
     <details>
       <summary>ℹ️ Fonctionnalités du site</summary>
       <div class="features-body">
-        <h3>🧭 Cinq outils météo</h3>
+        <h3>🧭 Six outils météo</h3>
         <ul>
           <li><b>Prévisions Météo famille</b> : qui a le plus chaud aujourd'hui et sur 7 jours, là où vit chaque membre de la famille</li>
           <li><b>Prévisions Météo villes</b> : comparateur de températures entre plusieurs villes du monde, même en altitude</li>
           <li><b>Prévisions Météo trajet</b> : le temps jour par jour le long d'un voyage, à chaque étape (commune, date d'arrivée, altitude), jusqu'à 16 jours, avec PDF</li>
+          <li><b>Prévisions Météo voyage</b> : la même chose partout dans le monde, en français ou en anglais, en °C ou °F, heure locale de chaque étape</li>
           <li><b>Historique Météo ville</b> : évolution des températures d'une ville, jour après jour, depuis 1940</li>
           <li><b>Historique Météo neige</b> : chutes de neige et neige restante au sol, pour une ville ou une station</li>
         </ul>
@@ -567,11 +588,12 @@ const FEATURES_CONTENT = {
     <details>
       <summary>ℹ️ Site features</summary>
       <div class="features-body">
-        <h3>🧭 Five weather tools</h3>
+        <h3>🧭 Six weather tools</h3>
         <ul>
           <li><b>Family weather forecast</b>: who's hottest today and over 7 days, where each family member lives</li>
           <li><b>City weather forecast</b>: compare temperatures between several cities worldwide, even at altitude</li>
           <li><b>Trip weather forecast</b>: day-by-day weather along a trip, at each stop (French town, arrival date, altitude), up to 16 days, with PDF</li>
+          <li><b>Travel weather forecast</b>: the same anywhere in the world, in French or English, °C or °F, local time at each stop</li>
           <li><b>City weather history</b>: a city's temperatures, day by day, since 1940</li>
           <li><b>Snow weather history</b>: snowfall and snow left on the ground, for a town or a ski resort</li>
         </ul>
@@ -646,6 +668,8 @@ function applyTranslations(){
   document.getElementById("card6-desc").textContent = t("card6Desc");
   document.getElementById("card8-title").textContent = t("card8Title");
   document.getElementById("card8-desc").textContent = t("card8Desc");
+  document.getElementById("card9-title").textContent = t("card9Title");
+  document.getElementById("card9-desc").textContent = t("card9Desc");
   document.getElementById("footer-text").textContent = t("footer");
   renderFeatures();
   renderProfileTexts();
