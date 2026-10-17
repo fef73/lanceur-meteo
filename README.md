@@ -15,6 +15,7 @@ Présentation des six sites, avec des textes prêts à partager : [comparateur-m
 | Historique Météo ville | [evolution-temperatures](https://fef73.github.io/evolution-temperatures/) | Évolution des températures d'une ville depuis 1940 |
 | Historique Météo neige | [meteo-neige](https://fef73.github.io/meteo-neige/) | Chutes de neige et neige restante au sol |
 | Météo astrale famille | [meteo-astro](https://fef73.github.io/meteo-astro/) | Horoscope du jour et thème natal, d'après la date, l'heure et le lieu de naissance |
+| Fiche climat intercommunalités | [COMCOM-PDF](https://fef73.github.io/COMCOM-PDF/) | Toutes les communes d'une intercommunalité sur une page A4 / PDF : températures, pluie, neige, gel, horizon neige, qualité de l'air |
 
 ## 📍 Ma position (GPS)
 
