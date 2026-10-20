@@ -129,6 +129,11 @@
     font-size:12px; color:var(--text-lo); margin:0;
   }
   .chevron{ flex:none; color:var(--text-lo); }
+  [hidden]{ display:none !important; }
+  .menu{ display:flex; flex-direction:column; gap:14px; }
+  .menu-sep{ margin:14px 0 0; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-lo); }
+  .back-link{ display:inline-block; margin:-8px 0 16px; font-size:14px; color:var(--text-lo); text-decoration:none; }
+  .back-link:hover{ color:var(--text-hi); }
 
   .geo-bar{
     display:flex; align-items:center; gap:10px; margin-bottom:14px;
@@ -275,6 +280,9 @@ document.getElementById('lock').addEventListener('submit', e => {
     </div>
   </header>
 
+  <a class="back-link" id="menu-back" href="#" hidden>‹ <span id="menu-back-txt">Météo</span></a>
+
+  <div data-only="meteo famille">
   <div class="geo-bar">
     <button class="geo-btn" id="geo-btn" type="button">📍 Ma position</button>
     <span class="geo-status" id="geo-status"></span>
@@ -285,7 +293,8 @@ document.getElementById('lock').addEventListener('submit', e => {
     <input id="geo-name-input" type="text" maxlength="60" autocomplete="off" enterkeyhint="done" placeholder="ex : Chalet, Maison…">
   </div>
 
-  <details class="profile" id="profile">
+  </div>
+  <details class="profile" id="profile" data-only="famille" hidden>
     <summary id="pf-summary">🎂 Mon profil (facultatif)</summary>
     <div class="profile-body">
       <label><span id="pf-l-pseudo">Pseudo</span><input id="pf-pseudo" type="text" maxlength="20" autocomplete="off"></label>
@@ -299,22 +308,7 @@ document.getElementById('lock').addEventListener('submit', e => {
   </details>
 
   <main>
-    <a class="card" style="--accent: var(--amber)" href="https://fef73.github.io/meteo-famille/" target="_blank" rel="noopener">
-      <span class="icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="4"/>
-          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
-        </svg>
-      </span>
-      <span class="card-text">
-        <p class="title" id="card1-title">Prévisions Météo famille</p>
-        <p class="desc" id="card1-desc">aujourd'hui — 7 jours</p>
-      </span>
-      <span class="chevron">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-      </span>
-    </a>
-
+  <div class="menu" data-menu="meteo">
     <a class="card" style="--accent: var(--azure)" href="https://fef73.github.io/comparateur-temperatures/" target="_blank" rel="noopener">
       <span class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -331,7 +325,7 @@ document.getElementById('lock').addEventListener('submit', e => {
       </span>
     </a>
 
-    <a class="card" style="--accent: #5ec8ff" href="https://fef73.github.io/mairies-pdf/meteo-trajet.html" target="_blank" rel="noopener">
+    <a class="card" style="--accent: #5ec8ff" href="https://fef73.github.io/meteo-travel/" target="_blank" rel="noopener">
       <span class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="6" cy="18" r="2.2"/>
@@ -340,24 +334,8 @@ document.getElementById('lock').addEventListener('submit', e => {
         </svg>
       </span>
       <span class="card-text">
-        <p class="title" id="card8-title">Prévisions Météo trajet</p>
-        <p class="desc" id="card8-desc">le temps à chaque étape — 16 jours</p>
-      </span>
-      <span class="chevron">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-      </span>
-    </a>
-
-    <a class="card" style="--accent: #f6c453" href="https://fef73.github.io/meteo-travel/" target="_blank" rel="noopener">
-      <span class="icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
-        </svg>
-      </span>
-      <span class="card-text">
-        <p class="title" id="card9-title">Prévisions Météo voyage</p>
-        <p class="desc" id="card9-desc">monde entier — FR/EN — °C/°F</p>
+        <p class="title" id="card9-title">Prévisions Météo trajet / voyage</p>
+        <p class="desc" id="card9-desc">chaque étape, monde entier — 16 jours</p>
       </span>
       <span class="chevron">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -395,6 +373,50 @@ document.getElementById('lock').addEventListener('submit', e => {
       </span>
     </a>
 
+    <p class="menu-sep" id="menu-sep">Autres espaces</p>
+    <a class="card nav" style="--accent: var(--amber)" href="#famille">
+      <span class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="15" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="9" cy="15" r="1.2"/></svg>
+      </span>
+      <span class="card-text">
+        <p class="title" id="navfam-title"></p>
+        <p class="desc" id="navfam-desc"></p>
+      </span>
+      <span class="chevron">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </span>
+    </a>
+
+    <a class="card nav" style="--accent: #9b8cff" href="#collectivites">
+      <span class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6M3 21h18"/></svg>
+      </span>
+      <span class="card-text">
+        <p class="title" id="navcoll-title"></p>
+        <p class="desc" id="navcoll-desc"></p>
+      </span>
+      <span class="chevron">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </span>
+    </a>
+  </div>
+  <div class="menu" data-menu="famille" hidden>
+    <a class="card" style="--accent: var(--amber)" href="https://fef73.github.io/meteo-famille/" target="_blank" rel="noopener">
+      <span class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+        </svg>
+      </span>
+      <span class="card-text">
+        <p class="title" id="card1-title">Prévisions Météo famille</p>
+        <p class="desc" id="card1-desc">aujourd'hui — 7 jours</p>
+      </span>
+      <span class="chevron">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </span>
+    </a>
+
     <a class="card" style="--accent: #ffd166" href="https://fef73.github.io/meteo-astro/" target="_blank" rel="noopener">
       <span class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -410,6 +432,8 @@ document.getElementById('lock').addEventListener('submit', e => {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
       </span>
     </a>
+  </div>
+  <div class="menu" data-menu="collectivites" hidden>
     <a class="card" style="--accent: #f4a3c0" href="https://comparateur-meteo.fr/offre-mairies.html" target="_blank" rel="noopener">
       <span class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -443,6 +467,7 @@ document.getElementById('lock').addEventListener('submit', e => {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
       </span>
     </a>
+
     <a class="card" style="--accent: #6fd0c4" href="https://fef73.github.io/COMCOM-PDF/" target="_blank" rel="noopener">
       <span class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -458,6 +483,7 @@ document.getElementById('lock').addEventListener('submit', e => {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
       </span>
     </a>
+  </div>
   </main>
 
   <div class="features-panel" id="features-panel"></div>
@@ -476,10 +502,16 @@ const TRANSLATIONS = {
     card1Desc: "aujourd'hui — 7 jours",
     card2Title: "Prévisions Météo villes",
     card2Desc: "comparateur de températures",
-    card8Title: "Prévisions Météo trajet",
-    card8Desc: "le temps à chaque étape — 16 jours",
-    card9Title: "Prévisions Météo voyage",
-    card9Desc: "monde entier — FR/EN — °C/°F",
+    card9Title: "Prévisions Météo trajet / voyage",
+    card9Desc: "chaque étape, monde entier — 16 jours",
+    pageTitleFamille: "Météo ludique",
+    pageTitleCollectivites: "Collectivités",
+    navfamTitle: "Météo ludique",
+    navfamDesc: "météo famille — météo astrale",
+    navcollTitle: "Espace collectivités",
+    navcollDesc: "mairies — intercommunalités",
+    menuSep: "Autres espaces",
+    menuBack: "Météo",
     card3Title: "Historique Météo ville",
     card3Desc: "évolution des températures",
     card4Title: "Historique Météo neige",
@@ -511,10 +543,16 @@ const TRANSLATIONS = {
     card1Desc: "today — 7 days",
     card2Title: "City weather forecast",
     card2Desc: "temperature comparator",
-    card8Title: "Trip weather forecast",
-    card8Desc: "weather at each stop — 16 days",
-    card9Title: "Travel weather forecast",
-    card9Desc: "worldwide — FR/EN — °C/°F",
+    card9Title: "Trip / travel weather forecast",
+    card9Desc: "each stop, worldwide — 16 days",
+    pageTitleFamille: "Fun weather",
+    pageTitleCollectivites: "Local authorities",
+    navfamTitle: "Fun weather",
+    navfamDesc: "family weather — astro weather",
+    navcollTitle: "Local authorities",
+    navcollDesc: "town halls — communities of communes",
+    menuSep: "Other spaces",
+    menuBack: "Weather",
     card3Title: "City weather history",
     card3Desc: "temperature trends",
     card4Title: "Snow weather history",
@@ -542,6 +580,21 @@ const TRANSLATIONS = {
 };
 
 let lang = (function(){ try { return localStorage.getItem("lanceur-meteo-lang"); } catch(e){ return null; } })() || (navigator.language && navigator.language.startsWith("en") ? "en" : "fr");
+
+// ---------- Menus : #famille et #collectivites (sinon menu Météo) ----------
+function currentMenu(){
+  const h = location.hash.slice(1);
+  return h === "famille" || h === "collectivites" ? h : "meteo";
+}
+function showMenu(){
+  const m = currentMenu();
+  document.querySelectorAll("[data-menu]").forEach(e => e.hidden = e.dataset.menu !== m);
+  document.querySelectorAll("[data-only]").forEach(e => e.hidden = !e.dataset.only.split(" ").includes(m));
+  document.getElementById("menu-back").hidden = m === "meteo";
+  const key = m === "famille" ? "pageTitleFamille" : m === "collectivites" ? "pageTitleCollectivites" : "pageTitle";
+  document.getElementById("page-title").textContent = t(key);
+}
+window.addEventListener("hashchange", () => { showMenu(); window.scrollTo(0, 0); });
 
 function t(key){
   const dict = TRANSLATIONS[lang] || TRANSLATIONS.fr;
@@ -672,7 +725,7 @@ function applyTranslations(){
   document.documentElement.lang = lang;
   document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
   document.getElementById("eyebrow").innerHTML = `<span class="pulse"></span> ${t("eyebrow")}`;
-  document.getElementById("page-title").textContent = t("pageTitle");
+  showMenu();
   document.getElementById("card1-title").textContent = t("card1Title");
   document.getElementById("card1-desc").textContent = t("card1Desc");
   document.getElementById("card2-title").textContent = t("card2Title");
@@ -687,8 +740,12 @@ function applyTranslations(){
   document.getElementById("card7-desc").textContent = t("card7Desc");
   document.getElementById("card6-title").textContent = t("card6Title");
   document.getElementById("card6-desc").textContent = t("card6Desc");
-  document.getElementById("card8-title").textContent = t("card8Title");
-  document.getElementById("card8-desc").textContent = t("card8Desc");
+  ["navfam", "navcoll"].forEach(k => {
+    document.getElementById(k + "-title").textContent = t(k + "Title");
+    document.getElementById(k + "-desc").textContent = t(k + "Desc");
+  });
+  document.getElementById("menu-sep").textContent = t("menuSep");
+  document.getElementById("menu-back-txt").textContent = t("menuBack");
   document.getElementById("card9-title").textContent = t("card9Title");
   document.getElementById("card9-desc").textContent = t("card9Desc");
   document.getElementById("card10-title").textContent = t("card10Title");
@@ -899,7 +956,7 @@ const geoNameRow = document.getElementById("geo-name");
 const geoNameInput = document.getElementById("geo-name-input");
 let currentGeo = null;
 function saveGeo(){ try { localStorage.setItem(GEO_KEY, JSON.stringify(currentGeo)); } catch(e){} }
-const cardBaseHrefs = [...document.querySelectorAll("a.card")].map(a => a.href);
+const cardBaseHrefs = [...document.querySelectorAll("a.card:not(.nav)")].map(a => a.href);
 
 function setStatus(text, ok){
   geoStatus.textContent = text || "";
@@ -907,7 +964,7 @@ function setStatus(text, ok){
 }
 
 function applyGeoToLinks(geo){
-  document.querySelectorAll("a.card").forEach((a, i) => {
+  document.querySelectorAll("a.card:not(.nav)").forEach((a, i) => {
     const url = new URL(cardBaseHrefs[i]);
     if (geo) {
       url.searchParams.set("lat", geo.lat.toFixed(4));

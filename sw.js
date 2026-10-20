@@ -1,6 +1,6 @@
 
 // Service worker minimal : réseau d'abord, copie locale si hors connexion.
-const CACHE = "lanceur-meteo-v2";
+const CACHE = "lanceur-meteo-v3";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
